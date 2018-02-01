@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
-using System.Linq;
+using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace GreenPrintClient
 {
     public partial class formGreenPrintClientMain : Form
     {
+        private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
+        private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
+
+        private bool formHasErrors = false;
+
         public formGreenPrintClientMain()
         {
             InitializeComponent();
@@ -69,7 +71,7 @@ namespace GreenPrintClient
 
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-
+            SubmitPrint();
         }
 
         private void txtClientID_Leave(object sender, EventArgs e)
@@ -164,6 +166,122 @@ namespace GreenPrintClient
 
             lstCCList.Items.Add(txtAddCC.Text);
             txtAddCC.Text = "";
+        }
+
+        // Actions
+        private string extractEmailCCList()
+        {
+            string list = string.Empty;
+
+            if (lstCCList.Items != null && lstCCList.Items.Count > 0)
+            {
+                foreach(var item in lstCCList.Items)
+                {
+                    if (item.ToString().Contains("@"))
+                    {
+                        list += item.ToString();
+                        list += ",";
+                    }
+                }
+            }
+
+            if (list.Length > 1)
+            {
+                list = list.TrimEnd(',');
+            }
+
+            return list;
+        }
+        private string extractPhoneNumbersCCList()
+        {
+            string list = string.Empty;
+
+            if (lstCCList.Items != null && lstCCList.Items.Count > 0)
+            {
+                foreach (var item in lstCCList.Items)
+                {
+                    if (item.ToString().Contains("@") == false)
+                    {
+                        // Not an email
+
+                    }
+                }
+            }
+
+            if (list.Length > 1)
+            {
+                list = list.TrimEnd(',');
+            }
+
+            return list;
+        }
+
+        private void SubmitPrint()
+        {
+            string url = localURL;
+            string documentName = "";
+            string CCList_emails = extractEmailCCList();
+            string CCList_phones = extractPhoneNumbersCCList();
+
+            WebRequest request = WebRequest.Create(url);
+            // Set the Method property of the request to POST.  
+            request.Method = "POST";
+            // Create POST data and convert it to a byte array.  
+
+            if (string.IsNullOrEmpty(txtDocumentName.Text))
+            {
+                documentName = Guid.NewGuid().ToString();
+            }
+
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
+            req.ClientID = txtClientID.Text;
+            req.DocumentName = documentName;
+            req.DocumentBytes = null;
+            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
+            req.GuestSign_RecipientSMSNumber = txtSMSNumber.Text;
+            req.CarbonCopy_EMailAddressesList = CCList_emails;
+            req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
+
+            byte[] data = null;
+            req.DocumentBytes = File.ReadAllBytes("c:\\temp\\doc.pdf");
+
+            MemoryStream memStream = new MemoryStream();
+
+            BinaryFormatter bf = new BinaryFormatter();
+            using (MemoryStream ms = new MemoryStream())
+            {
+                bf.Serialize(ms, req);
+                data = ms.ToArray();
+            }
+
+            var re = JsonConvert.SerializeObject(req);
+            byte[] byteArray = Encoding.UTF8.GetBytes(re);
+            // Set the ContentType property of the WebRequest.  
+            request.ContentType = "application/json";
+            // Set the ContentLength property of the WebRequest.  
+            request.ContentLength = byteArray.Length;
+            // Get the request stream.  
+            Stream dataStream = request.GetRequestStream();
+            // Write the data to the request stream.  
+            dataStream.Write(byteArray, 0, byteArray.Length);
+            // Close the Stream object.  
+            dataStream.Close();
+            // Get the response.  
+            WebResponse response = request.GetResponse();
+            // Display the status.  
+            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
+            // Get the stream containing content returned by the server.  
+            dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.  
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.  
+            string responseFromServer = reader.ReadToEnd();
+            // Display the content.  
+            Console.WriteLine(responseFromServer);
+            // Clean up the streams.  
+            reader.Close();
+            dataStream.Close();
+            response.Close();
         }
     }
 }
