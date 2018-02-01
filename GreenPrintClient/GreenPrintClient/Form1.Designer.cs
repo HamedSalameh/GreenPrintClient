@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtDocumentName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -46,8 +47,10 @@
             this.cbRecipientSMS = new System.Windows.Forms.CheckBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSubmit = new System.Windows.Forms.Button();
+            this.errorProvider = new System.Windows.Forms.ErrorProvider(this.components);
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -85,6 +88,7 @@
             this.txtClientID.Name = "txtClientID";
             this.txtClientID.Size = new System.Drawing.Size(238, 20);
             this.txtClientID.TabIndex = 5;
+            this.txtClientID.Leave += new System.EventHandler(this.txtClientID_Leave);
             // 
             // label1
             // 
@@ -129,6 +133,7 @@
             this.btnAddToList.TabIndex = 27;
             this.btnAddToList.Text = "Add";
             this.btnAddToList.UseVisualStyleBackColor = true;
+            this.btnAddToList.Click += new System.EventHandler(this.btnAddToList_Click);
             // 
             // label3
             // 
@@ -156,6 +161,7 @@
             this.rbRemoteSign.TabIndex = 22;
             this.rbRemoteSign.Text = "Sign via remote device";
             this.rbRemoteSign.UseVisualStyleBackColor = true;
+            this.rbRemoteSign.CheckedChanged += new System.EventHandler(this.rbRemoteSign_CheckedChanged);
             // 
             // rbDeviceSign
             // 
@@ -176,6 +182,7 @@
             this.txtEmailAddress.Name = "txtEmailAddress";
             this.txtEmailAddress.Size = new System.Drawing.Size(228, 20);
             this.txtEmailAddress.TabIndex = 20;
+            this.txtEmailAddress.Leave += new System.EventHandler(this.txtEmailAddress_Leave);
             // 
             // cbRecipientEmail
             // 
@@ -187,6 +194,7 @@
             this.cbRecipientEmail.TabIndex = 19;
             this.cbRecipientEmail.Text = "Sign via Email";
             this.cbRecipientEmail.UseVisualStyleBackColor = true;
+            this.cbRecipientEmail.CheckedChanged += new System.EventHandler(this.cbRecipientEmail_CheckedChanged);
             // 
             // txtSMSNumber
             // 
@@ -195,6 +203,7 @@
             this.txtSMSNumber.Name = "txtSMSNumber";
             this.txtSMSNumber.Size = new System.Drawing.Size(228, 20);
             this.txtSMSNumber.TabIndex = 18;
+            this.txtSMSNumber.Leave += new System.EventHandler(this.txtSMSNumber_Leave);
             // 
             // cbRecipientSMS
             // 
@@ -206,6 +215,7 @@
             this.cbRecipientSMS.TabIndex = 17;
             this.cbRecipientSMS.Text = "Sign via SMS";
             this.cbRecipientSMS.UseVisualStyleBackColor = true;
+            this.cbRecipientSMS.CheckedChanged += new System.EventHandler(this.cbRecipientSMS_CheckedChanged);
             // 
             // btnCancel
             // 
@@ -225,6 +235,11 @@
             this.btnSubmit.TabIndex = 25;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
+            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
+            // 
+            // errorProvider
+            // 
+            this.errorProvider.ContainerControl = this;
             // 
             // formGreenPrintClientMain
             // 
@@ -245,6 +260,7 @@
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -269,6 +285,7 @@
         private System.Windows.Forms.CheckBox cbRecipientSMS;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSubmit;
+        private System.Windows.Forms.ErrorProvider errorProvider;
     }
 }
 
