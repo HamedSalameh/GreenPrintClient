@@ -252,11 +252,11 @@ namespace GreenPrintClient
 
             if (string.IsNullOrEmpty(txtDocumentName.Text))
             {
-                var len = txtClientID.Text.IndexOf("@") > 0 ? txtClientID.Text.IndexOf("@") : txtClientID.Text.Length-1;
+                var len = txtClientID.Text.IndexOf("@") > 0 ? txtClientID.Text.IndexOf("@") : txtClientID.Text.Length - 1;
                 var dateSignature = DateTime.UtcNow.ToUnixTime();
 
                 var clientIDwithoutAtSign = txtClientID.Text.Substring(0, len);
-                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
+                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}.";
             }
 
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
@@ -281,6 +281,15 @@ namespace GreenPrintClient
             }
 
             var re = JsonConvert.SerializeObject(req);
+
+            submitViaWebRequest(request, re);
+
+        }
+
+        private static string submitViaWebRequest(WebRequest request, string re)
+        {
+            string status = string.Empty;
+
             byte[] byteArray = Encoding.UTF8.GetBytes(re);
             // Set the ContentType property of the WebRequest.  
             request.ContentType = "application/json";
@@ -294,20 +303,28 @@ namespace GreenPrintClient
             dataStream.Close();
             // Get the response.  
             WebResponse response = request.GetResponse();
-            // Display the status.  
-            Console.WriteLine(((HttpWebResponse)response).StatusDescription);
-            // Get the stream containing content returned by the server.  
-            dataStream = response.GetResponseStream();
-            // Open the stream using a StreamReader for easy access.  
-            StreamReader reader = new StreamReader(dataStream);
-            // Read the content.  
-            string responseFromServer = reader.ReadToEnd();
-            // Display the content.  
-            Console.WriteLine(responseFromServer);
-            // Clean up the streams.  
-            reader.Close();
-            dataStream.Close();
+            // Get the status.  
+            status = ((HttpWebResponse)response).StatusDescription;
+
+            if (((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+            {
+                status += Environment.NewLine;
+                // Get the stream containing content returned by the server.  
+                dataStream = response.GetResponseStream();
+                // Open the stream using a StreamReader for easy access.  
+                StreamReader reader = new StreamReader(dataStream);
+                // Read the content.  
+                string responseFromServer = reader.ReadToEnd();
+                // Display the content.  
+                status += responseFromServer;
+                // Clean up the streams.  
+                reader.Close();
+                dataStream.Close();
+            }
+
             response.Close();
+
+            return status;
         }
     }
 }
