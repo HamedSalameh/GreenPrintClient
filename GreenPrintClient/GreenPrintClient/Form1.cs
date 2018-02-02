@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -191,19 +192,30 @@ namespace GreenPrintClient
             }
 
             return list;
-        }
+        } 
         private string extractPhoneNumbersCCList()
-        {
+         {
             string list = string.Empty;
 
             if (lstCCList.Items != null && lstCCList.Items.Count > 0)
             {
                 foreach (var item in lstCCList.Items)
                 {
+
                     if (item.ToString().Contains("@") == false)
                     {
                         // Not an email
+                        var newitem = item.ToString().Replace('-', ' ').Replace('.',' ').Replace(" ","");    // removing dashes
+                        // removing dots
+                        long newnumber;
+                        long.TryParse(newitem, out newnumber);
 
+                        if(newnumber != 0)
+                        {
+                            // successful parse
+                            list += item.ToString().Replace('-', ' ').Replace('.', ' ').Replace(" ", "");
+                            list += ",";
+                        }
                     }
                 }
             }
