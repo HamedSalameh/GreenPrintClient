@@ -289,40 +289,51 @@ namespace GreenPrintClient
         private static string submitViaWebRequest(WebRequest request, string re)
         {
             string status = string.Empty;
+            WebResponse response = null;
 
-            byte[] byteArray = Encoding.UTF8.GetBytes(re);
-            // Set the ContentType property of the WebRequest.  
-            request.ContentType = "application/json";
-            // Set the ContentLength property of the WebRequest.  
-            request.ContentLength = byteArray.Length;
-            // Get the request stream.  
-            Stream dataStream = request.GetRequestStream();
-            // Write the data to the request stream.  
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            // Close the Stream object.  
-            dataStream.Close();
-            // Get the response.  
-            WebResponse response = request.GetResponse();
-            // Get the status.  
-            status = ((HttpWebResponse)response).StatusDescription;
-
-            if (((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+            try
             {
-                status += Environment.NewLine;
-                // Get the stream containing content returned by the server.  
-                dataStream = response.GetResponseStream();
-                // Open the stream using a StreamReader for easy access.  
-                StreamReader reader = new StreamReader(dataStream);
-                // Read the content.  
-                string responseFromServer = reader.ReadToEnd();
-                // Display the content.  
-                status += responseFromServer;
-                // Clean up the streams.  
-                reader.Close();
+                byte[] byteArray = Encoding.UTF8.GetBytes(re);
+                // Set the ContentType property of the WebRequest.  
+                request.ContentType = "application/json";
+                // Set the ContentLength property of the WebRequest.  
+                request.ContentLength = byteArray.Length;
+                // Get the request stream.  
+                Stream dataStream = request.GetRequestStream();
+                // Write the data to the request stream.  
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                // Close the Stream object.  
                 dataStream.Close();
-            }
+                // Get the response.  
+                 response = request.GetResponse();
+                // Get the status.  
+                status = ((HttpWebResponse)response).StatusDescription;
 
-            response.Close();
+                if (((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                {
+                    status += Environment.NewLine;
+                    // Get the stream containing content returned by the server.  
+                    dataStream = response.GetResponseStream();
+                    // Open the stream using a StreamReader for easy access.  
+                    StreamReader reader = new StreamReader(dataStream);
+                    // Read the content.  
+                    string responseFromServer = reader.ReadToEnd();
+                    // Display the content.  
+                    status += responseFromServer;
+                    // Clean up the streams.  
+                    reader.Close();
+                    dataStream.Close();
+                }
+            }
+            catch (Exception Ex)
+            {
+                status = "An error happened while trying to send the request.\r\n" + Ex.Message;
+            }
+            finally
+            {
+                if (response != null)
+                    response.Close();
+            }
 
             return status;
         }
