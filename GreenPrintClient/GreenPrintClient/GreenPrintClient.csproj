@@ -84,5 +84,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GreenPrintClient.Helpers\GreenPrintClient.Helpers.csproj">
+      <Project>{99e556bc-dd58-4e1b-98c7-e61960eb8d4d}</Project>
+      <Name>GreenPrintClient.Helpers</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using GreenPrintClient.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -172,6 +174,7 @@ namespace GreenPrintClient
         // Actions
         private string extractEmailCCList()
         {
+            List<string> emails = new List<string>();
             string list = string.Empty;
 
             if (lstCCList.Items != null && lstCCList.Items.Count > 0)
@@ -180,21 +183,24 @@ namespace GreenPrintClient
                 {
                     if (item.ToString().Contains("@"))
                     {
-                        list += item.ToString();
-                        list += ",";
+                        if (emails.Contains(item.ToString())== false)
+                        {
+                            emails.Add(item.ToString());
+                        }
                     }
                 }
             }
 
-            if (list.Length > 1)
+            if (emails != null && emails.Count > 0)
             {
-                list = list.TrimEnd(',');
+                list = string.Join(",", emails.ToArray());
             }
 
             return list;
         } 
         private string extractPhoneNumbersCCList()
          {
+            List<string> phoneNumbers = new List<string>();
             string list = string.Empty;
 
             if (lstCCList.Items != null && lstCCList.Items.Count > 0)
@@ -213,17 +219,21 @@ namespace GreenPrintClient
                         if(newnumber != 0)
                         {
                             // successful parse
-                            list += item.ToString().Replace('-', ' ').Replace('.', ' ').Replace(" ", "");
-                            list += ",";
+                            string extractedPhoneNumber = newitem;
+                            if (phoneNumbers.Contains(extractedPhoneNumber) == false)
+                            {
+                                phoneNumbers.Add(extractedPhoneNumber);
+                            }
                         }
                     }
                 }
             }
 
-            if (list.Length > 1)
+            if (phoneNumbers != null && phoneNumbers.Count > 0)
             {
-                list = list.TrimEnd(',');
+                list = string.Join(",", phoneNumbers.ToArray());
             }
+
 
             return list;
         }
@@ -242,7 +252,11 @@ namespace GreenPrintClient
 
             if (string.IsNullOrEmpty(txtDocumentName.Text))
             {
-                documentName = Guid.NewGuid().ToString();
+                var len = txtClientID.Text.IndexOf("@") > 0 ? txtClientID.Text.IndexOf("@") : txtClientID.Text.Length-1;
+                var dateSignature = DateTime.UtcNow.ToUnixTime();
+
+                var clientIDwithoutAtSign = txtClientID.Text.Substring(0, len);
+                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
             }
 
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
