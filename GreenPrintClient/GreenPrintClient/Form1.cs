@@ -245,11 +245,15 @@ namespace GreenPrintClient
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
 
+            // Clear any message in messages text box
+            txtMessages.Clear();
+
             WebRequest request = WebRequest.Create(url);
             // Set the Method property of the request to POST.  
             request.Method = "POST";
             // Create POST data and convert it to a byte array.  
 
+            // Try get the document name if it was provided, otherwise, generate one
             if (string.IsNullOrEmpty(txtDocumentName.Text))
             {
                 var len = txtClientID.Text.IndexOf("@") > 0 ? txtClientID.Text.IndexOf("@") : txtClientID.Text.Length - 1;
@@ -269,6 +273,9 @@ namespace GreenPrintClient
             req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
 
             byte[] data = null;
+
+
+
             req.DocumentBytes = File.ReadAllBytes("c:\\temp\\doc.pdf");
 
             MemoryStream memStream = new MemoryStream();
@@ -282,8 +289,8 @@ namespace GreenPrintClient
 
             var re = JsonConvert.SerializeObject(req);
 
-            submitViaWebRequest(request, re);
-
+            var resultStatus = submitViaWebRequest(request, re);
+            txtMessages.Text = resultStatus;
         }
 
         private static string submitViaWebRequest(WebRequest request, string re)
@@ -337,5 +344,6 @@ namespace GreenPrintClient
 
             return status;
         }
+
     }
 }
