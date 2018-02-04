@@ -30,7 +30,19 @@ namespace GreenPrintClient
             errorProvider.BlinkRate = 0;
 
             txtSMSNumber.Enabled = cbRecipientSMS.Checked;
+            cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
 
+            Dictionary<string, string> countryCodeList = Countries.GetData();
+
+            if (countryCodeList != null)
+            {
+                cmbCountriesPhonePrefix.DataSource = new BindingSource(countryCodeList, null);
+                cmbCountriesPhonePrefix.DisplayMember = "Key";
+                cmbCountriesPhonePrefix.ValueMember = "Value";
+
+                cmbCountriesPhonePrefix.SelectedIndex = 122; // Default Israel
+
+            }
         }
 
         private void formGreenPrintClientMain_Load(object sender, EventArgs e)
@@ -100,6 +112,9 @@ namespace GreenPrintClient
         private void cbRecipientSMS_CheckedChanged(object sender, EventArgs e)
         {
             txtSMSNumber.Enabled = cbRecipientSMS.Checked;
+            cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
+            cmbCountriesPhonePrefix.SelectedIndex = 1;
+            cmbCountriesPhonePrefix.SelectedIndex = 122;
 
             if (txtSMSNumber.Enabled == false)
             {
@@ -274,8 +289,6 @@ namespace GreenPrintClient
 
             byte[] data = null;
 
-
-
             req.DocumentBytes = File.ReadAllBytes("c:\\temp\\doc.pdf");
 
             MemoryStream memStream = new MemoryStream();
@@ -345,5 +358,16 @@ namespace GreenPrintClient
             return status;
         }
 
+        private void cmbCountriesPhonePrefix_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtSMSNumber.Text = cmbCountriesPhonePrefix.SelectedValue.ToString();
+        }
+
+        private void cmbCountriesPhonePrefix_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == 13)
+            {
+            }
+        }
     }
 }

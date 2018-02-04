@@ -51,6 +51,7 @@
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSubmit = new System.Windows.Forms.Button();
+            this.cmbCountriesPhonePrefix = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -105,6 +106,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.cmbCountriesPhonePrefix);
             this.groupBox2.Controls.Add(this.txtAddCC);
             this.groupBox2.Controls.Add(this.btnAddToList);
             this.groupBox2.Controls.Add(this.label3);
@@ -203,9 +205,9 @@
             // txtSMSNumber
             // 
             this.txtSMSNumber.Enabled = false;
-            this.txtSMSNumber.Location = new System.Drawing.Point(124, 76);
+            this.txtSMSNumber.Location = new System.Drawing.Point(192, 76);
             this.txtSMSNumber.Name = "txtSMSNumber";
-            this.txtSMSNumber.Size = new System.Drawing.Size(228, 20);
+            this.txtSMSNumber.Size = new System.Drawing.Size(160, 20);
             this.txtSMSNumber.TabIndex = 18;
             this.txtSMSNumber.Leave += new System.EventHandler(this.txtSMSNumber_Leave);
             // 
@@ -265,6 +267,17 @@
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
             // 
+            // cmbCountriesPhonePrefix
+            // 
+            this.cmbCountriesPhonePrefix.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.cmbCountriesPhonePrefix.FormattingEnabled = true;
+            this.cmbCountriesPhonePrefix.Location = new System.Drawing.Point(124, 75);
+            this.cmbCountriesPhonePrefix.Name = "cmbCountriesPhonePrefix";
+            this.cmbCountriesPhonePrefix.Size = new System.Drawing.Size(62, 21);
+            this.cmbCountriesPhonePrefix.TabIndex = 29;
+            this.cmbCountriesPhonePrefix.SelectedIndexChanged += new System.EventHandler(this.cmbCountriesPhonePrefix_SelectedIndexChanged);
+            this.cmbCountriesPhonePrefix.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.cmbCountriesPhonePrefix_KeyPress);
+            // 
             // formGreenPrintClientMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -314,6 +327,7 @@
         private System.Windows.Forms.TextBox txtMessages;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSubmit;
+        private System.Windows.Forms.ComboBox cmbCountriesPhonePrefix;
     }
 }
 
