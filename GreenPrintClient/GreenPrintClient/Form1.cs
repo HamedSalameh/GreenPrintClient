@@ -16,6 +16,9 @@ namespace GreenPrintClient
         private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
         private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
 
+        Dictionary<string, string> settings;
+        Dictionary<string, string> countryCodeList;
+
         private bool formHasErrors = false;
 
         public formGreenPrintClientMain()
@@ -25,14 +28,15 @@ namespace GreenPrintClient
        
         private void Init()
         {
+            settings = SettingsManager.LoadSettings();
+            countryCodeList = Countries.GetData();
+
             this.WindowState = FormWindowState.Minimized;
             errorProvider.BlinkStyle = ErrorBlinkStyle.BlinkIfDifferentError;
             errorProvider.BlinkRate = 0;
 
             txtSMSNumber.Enabled = cbRecipientSMS.Checked;
             cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
-
-            Dictionary<string, string> countryCodeList = Countries.GetData();
 
             if (countryCodeList != null)
             {
@@ -41,17 +45,32 @@ namespace GreenPrintClient
                 cmbCountriesPhonePrefix.ValueMember = "Value";
 
                 cmbCountriesPhonePrefix.SelectedIndex = 122; // Default Israel
-
             }
+
+            string clientID = string.Empty;
+            settings.TryGetValue("ClientID", out clientID);
+            if (clientID != string.Empty)
+            {
+                txtClientID.Text = clientID;
+            }
+            
         }
 
         private void formGreenPrintClientMain_Load(object sender, EventArgs e)
         {
             Init();
 
-            var path = @"c:\temp";
+            string inboxPath = string.Empty;
+            settings.TryGetValue("InboxFolder", out inboxPath);
+            if (string.IsNullOrEmpty(inboxPath))
+            {
+                MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+                return;
+            }
+
             FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = path;
+            watcher.Path = inboxPath;
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
             watcher.Filter = "*.*";
             watcher.Changed += new FileSystemEventHandler(OnChanged);
