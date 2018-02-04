@@ -13,6 +13,7 @@ namespace GreenPrintClient
 {
     public partial class formGreenPrintClientMain : Form
     {
+        private string serviceURL, inboxPath;
         private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
         private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
 
@@ -25,7 +26,7 @@ namespace GreenPrintClient
         {
             InitializeComponent();
         }
-       
+
         private void Init()
         {
             settings = SettingsManager.LoadSettings();
@@ -53,18 +54,26 @@ namespace GreenPrintClient
             {
                 txtClientID.Text = clientID;
             }
-            
+
+
         }
 
         private void formGreenPrintClientMain_Load(object sender, EventArgs e)
         {
             Init();
 
-            string inboxPath = string.Empty;
             settings.TryGetValue("InboxFolder", out inboxPath);
             if (string.IsNullOrEmpty(inboxPath))
             {
                 MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+                return;
+            }
+
+            settings.TryGetValue("DSORServiceURL", out serviceURL);
+            if (string.IsNullOrEmpty(inboxPath))
+            {
+                MessageBox.Show("GreenPrint service URL could not be loaded.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
                 return;
             }
@@ -87,19 +96,20 @@ namespace GreenPrintClient
                 if (InvokeRequired)
                 {
                     // after we've done all the processing, 
-                    this.Invoke(new MethodInvoker(delegate {
+                    this.Invoke(new MethodInvoker(delegate
+                    {
                         // load the control with the appropriate data
                         this.WindowState = FormWindowState.Normal;
                     }));
                     return;
                 }
             }
-            MessageBox.Show("Change detected!") ;
+            MessageBox.Show("Change detected!");
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            
+
             this.Close();
         }
 
@@ -110,7 +120,7 @@ namespace GreenPrintClient
 
         private void txtClientID_Leave(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtClientID.Text)== false && txtClientID.Text.Length < 5)
+            if (string.IsNullOrEmpty(txtClientID.Text) == false && txtClientID.Text.Length < 5)
             {
                 errorProvider.SetError(txtClientID, "ClientID value is too short");
             }
@@ -140,7 +150,7 @@ namespace GreenPrintClient
                 txtSMSNumber.Text = "";
                 errorProvider.SetError(txtSMSNumber, "");
             }
-                
+
         }
         private void cbRecipientEmail_CheckedChanged(object sender, EventArgs e)
         {
@@ -213,11 +223,11 @@ namespace GreenPrintClient
 
             if (lstCCList.Items != null && lstCCList.Items.Count > 0)
             {
-                foreach(var item in lstCCList.Items)
+                foreach (var item in lstCCList.Items)
                 {
                     if (item.ToString().Contains("@"))
                     {
-                        if (emails.Contains(item.ToString())== false)
+                        if (emails.Contains(item.ToString()) == false)
                         {
                             emails.Add(item.ToString());
                         }
@@ -231,9 +241,9 @@ namespace GreenPrintClient
             }
 
             return list;
-        } 
+        }
         private string extractPhoneNumbersCCList()
-         {
+        {
             List<string> phoneNumbers = new List<string>();
             string list = string.Empty;
 
@@ -245,12 +255,12 @@ namespace GreenPrintClient
                     if (item.ToString().Contains("@") == false)
                     {
                         // Not an email
-                        var newitem = item.ToString().Replace('-', ' ').Replace('.',' ').Replace(" ","");    // removing dashes
+                        var newitem = item.ToString().Replace('-', ' ').Replace('.', ' ').Replace(" ", "");    // removing dashes
                         // removing dots
                         long newnumber;
                         long.TryParse(newitem, out newnumber);
 
-                        if(newnumber != 0)
+                        if (newnumber != 0)
                         {
                             // successful parse
                             string extractedPhoneNumber = newitem;
@@ -274,7 +284,6 @@ namespace GreenPrintClient
 
         private void SubmitPrint()
         {
-            string url = localURL;
             string documentName = "";
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
@@ -282,7 +291,7 @@ namespace GreenPrintClient
             // Clear any message in messages text box
             txtMessages.Clear();
 
-            WebRequest request = WebRequest.Create(url);
+            WebRequest request = WebRequest.Create(serviceURL);
             // Set the Method property of the request to POST.  
             request.Method = "POST";
             // Create POST data and convert it to a byte array.  
@@ -308,8 +317,35 @@ namespace GreenPrintClient
 
             byte[] data = null;
 
-            req.DocumentBytes = File.ReadAllBytes("c:\\temp\\doc.pdf");
+            var directory = new DirectoryInfo(inboxPath);
+            var recentPrintJob = directory.GetFiles()
+                                                     .OrderByDescending(f => f.LastWriteTime)
+                                                     .First();
 
+            if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
+            {
+                MessageBox.Show("Could not detect latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                if (File.Exists(recentPrintJob.FullName))
+                {
+                    req.DocumentBytes = File.ReadAllBytes(recentPrintJob.FullName);
+                }
+            }
+            catch (Exception Ex)
+            {
+                // log
+                MessageBox.Show("Could not read latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine(Ex.Message);
+            }
+            finally
+            {
+                req = null;
+            }
+            
             MemoryStream memStream = new MemoryStream();
 
             BinaryFormatter bf = new BinaryFormatter();
@@ -344,7 +380,7 @@ namespace GreenPrintClient
                 // Close the Stream object.  
                 dataStream.Close();
                 // Get the response.  
-                 response = request.GetResponse();
+                response = request.GetResponse();
                 // Get the status.  
                 status = ((HttpWebResponse)response).StatusDescription;
 
