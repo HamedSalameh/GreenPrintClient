@@ -303,7 +303,7 @@ namespace GreenPrintClient
                 var dateSignature = DateTime.UtcNow.ToUnixTime();
 
                 var clientIDwithoutAtSign = txtClientID.Text.Substring(0, len);
-                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}.";
+                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
             }
 
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
@@ -340,12 +340,17 @@ namespace GreenPrintClient
                 // log
                 MessageBox.Show("Could not read latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Console.WriteLine(Ex.Message);
+                req = null;
+
             }
             finally
             {
-                req = null;
+                
             }
-            
+
+            if (req == null)
+                return;
+
             MemoryStream memStream = new MemoryStream();
 
             BinaryFormatter bf = new BinaryFormatter();
