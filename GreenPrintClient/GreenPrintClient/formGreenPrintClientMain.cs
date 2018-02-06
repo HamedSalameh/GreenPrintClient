@@ -284,8 +284,7 @@ namespace GreenPrintClient
 
         private void SubmitPrint()
         {
-
-            string documentName = "";
+            string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
             string recipientSMSNumber = "+" + cmbCountriesPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
