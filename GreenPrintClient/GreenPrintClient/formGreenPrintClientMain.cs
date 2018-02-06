@@ -284,9 +284,11 @@ namespace GreenPrintClient
 
         private void SubmitPrint()
         {
+
             string documentName = "";
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
+            string recipientSMSNumber = "+" + cmbCountriesPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
 
             // Clear any message in messages text box
             txtMessages.Clear();
@@ -311,7 +313,7 @@ namespace GreenPrintClient
             req.DocumentName = documentName;
             req.DocumentBytes = null;
             req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
-            req.GuestSign_RecipientSMSNumber = txtSMSNumber.Text;
+            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
             req.CarbonCopy_EMailAddressesList = CCList_emails;
             req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
 
@@ -345,7 +347,6 @@ namespace GreenPrintClient
             }
             finally
             {
-                
             }
 
             if (req == null)
@@ -373,6 +374,9 @@ namespace GreenPrintClient
 
             try
             {
+                Cursor.Current = Cursors.WaitCursor;
+
+
                 byte[] byteArray = Encoding.UTF8.GetBytes(re);
                 // Set the ContentType property of the WebRequest.  
                 request.ContentType = "application/json";
@@ -411,6 +415,8 @@ namespace GreenPrintClient
             }
             finally
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 if (response != null)
                     response.Close();
             }
@@ -420,7 +426,7 @@ namespace GreenPrintClient
 
         private void cmbCountriesPhonePrefix_SelectedIndexChanged(object sender, EventArgs e)
         {
-            txtSMSNumber.Text = cmbCountriesPhonePrefix.SelectedValue.ToString();
+            //txtSMSNumber.Text = cmbCountriesPhonePrefix.SelectedValue.ToString();
         }
 
         private void cmbCountriesPhonePrefix_KeyPress(object sender, KeyPressEventArgs e)
