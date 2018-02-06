@@ -307,6 +307,7 @@ namespace GreenPrintClient
                 documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
             }
 
+            // Build DSO request
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
             req.ClientID = txtClientID.Text;
             req.DocumentName = documentName;
