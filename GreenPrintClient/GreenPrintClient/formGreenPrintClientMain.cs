@@ -116,13 +116,31 @@ namespace GreenPrintClient
                     return;
                 }
             }
-            MessageBox.Show("Change detected!");
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
+            txtDocumentName.Text = string.Empty;
+            txtEmailAddress.Text = string.Empty;
+            txtSMSNumber.Text = string.Empty;
+            lstCCList.Items.Clear();
 
-            this.Close();
+            if (this.WindowState != FormWindowState.Minimized) //<<======Now it wont give exception**
+            {
+                //Load data correspondin to "MyName"
+                //Populate a globale variable List<string> which will be
+                //bound to grid at some later stage
+                if (InvokeRequired)
+                {
+                    // after we've done all the processing, 
+                    this.Invoke(new MethodInvoker(delegate
+                    {
+                        // load the control with the appropriate data
+                        this.WindowState = FormWindowState.Minimized;
+                    }));
+                    return;
+                }
+            }
         }
 
         private void btnSubmit_Click(object sender, EventArgs e)
