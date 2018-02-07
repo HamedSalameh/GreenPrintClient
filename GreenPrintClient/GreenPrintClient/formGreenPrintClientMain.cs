@@ -13,14 +13,12 @@ namespace GreenPrintClient
 {
     public partial class formGreenPrintClientMain : Form
     {
-        private string serviceURL, inboxPath;
+        private string serviceURL, inboxFolder, submittedFolder, failedFolder;
         private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
         private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
-
-        private bool formHasErrors = false;
 
         public formGreenPrintClientMain()
         {
@@ -54,16 +52,30 @@ namespace GreenPrintClient
             {
                 txtClientID.Text = clientID;
             }
-
-
         }
 
         private void formGreenPrintClientMain_Load(object sender, EventArgs e)
         {
             Init();
 
-            settings.TryGetValue("InboxFolder", out inboxPath);
-            if (string.IsNullOrEmpty(inboxPath))
+            settings.TryGetValue("InboxFolder", out inboxFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+                return;
+            }
+
+            settings.TryGetValue("SubmittedFolder", out submittedFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+                return;
+            }
+
+            settings.TryGetValue("FailedFolder", out failedFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
             {
                 MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
@@ -71,7 +83,7 @@ namespace GreenPrintClient
             }
 
             settings.TryGetValue("DSORServiceURL", out serviceURL);
-            if (string.IsNullOrEmpty(inboxPath))
+            if (string.IsNullOrEmpty(inboxFolder))
             {
                 MessageBox.Show("GreenPrint service URL could not be loaded.", "Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
@@ -79,7 +91,7 @@ namespace GreenPrintClient
             }
 
             FileSystemWatcher watcher = new FileSystemWatcher();
-            watcher.Path = inboxPath;
+            watcher.Path = inboxFolder;
             watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size;
             watcher.Filter = "*.*";
             watcher.Changed += new FileSystemEventHandler(OnChanged);
@@ -319,35 +331,7 @@ namespace GreenPrintClient
 
             byte[] data = null;
 
-            var directory = new DirectoryInfo(inboxPath);
-            var recentPrintJob = directory.GetFiles()
-                                                     .OrderByDescending(f => f.LastWriteTime)
-                                                     .First();
-
-            if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
-            {
-                MessageBox.Show("Could not detect latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            try
-            {
-                if (File.Exists(recentPrintJob.FullName))
-                {
-                    req.DocumentBytes = File.ReadAllBytes(recentPrintJob.FullName);
-                }
-            }
-            catch (Exception Ex)
-            {
-                // log
-                MessageBox.Show("Could not read latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Console.WriteLine(Ex.Message);
-                req = null;
-
-            }
-            finally
-            {
-            }
+            
 
             if (req == null)
                 return;
@@ -432,6 +416,40 @@ namespace GreenPrintClient
         private void cmbCountriesPhonePrefix_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == 13)
+            {
+            }
+        }
+
+        private void GetLatestPrint()
+        {
+            byte[] latestPrintedDocument = null;
+            var directory = new DirectoryInfo(inboxFolder);
+            var recentPrintJob = directory.GetFiles()
+                                                     .OrderByDescending(f => f.LastWriteTime)
+                                                     .First();
+
+            if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
+            {
+                MessageBox.Show("Could not detect latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            try
+            {
+                if (File.Exists(recentPrintJob.FullName))
+                {
+                    latestPrintedDocument = File.ReadAllBytes(recentPrintJob.FullName);
+                }
+            }
+            catch (Exception Ex)
+            {
+                // log
+                MessageBox.Show("Could not read latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine(Ex.Message);
+                latestPrintedDocument = null;
+
+            }
+            finally
             {
             }
         }
