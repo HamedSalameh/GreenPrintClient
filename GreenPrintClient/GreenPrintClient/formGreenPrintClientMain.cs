@@ -125,22 +125,18 @@ namespace GreenPrintClient
             txtSMSNumber.Text = string.Empty;
             lstCCList.Items.Clear();
 
-            if (this.WindowState != FormWindowState.Minimized) //<<======Now it wont give exception**
+            if (InvokeRequired)
             {
-                //Load data correspondin to "MyName"
-                //Populate a globale variable List<string> which will be
-                //bound to grid at some later stage
-                if (InvokeRequired)
+                // after we've done all the processing, 
+                this.Invoke(new MethodInvoker(delegate
                 {
-                    // after we've done all the processing, 
-                    this.Invoke(new MethodInvoker(delegate
-                    {
                         // load the control with the appropriate data
                         this.WindowState = FormWindowState.Minimized;
-                    }));
-                    return;
-                }
+                }));
+                return;
             }
+            else
+                this.WindowState = FormWindowState.Minimized;
         }
 
         private void btnSubmit_Click(object sender, EventArgs e)
@@ -349,10 +345,12 @@ namespace GreenPrintClient
 
             byte[] data = null;
 
-            
+            data = GetLatestPrint();
 
             if (req == null)
                 return;
+
+            req.DocumentBytes = data;
 
             MemoryStream memStream = new MemoryStream();
 
@@ -438,7 +436,7 @@ namespace GreenPrintClient
             }
         }
 
-        private void GetLatestPrint()
+        private byte[] GetLatestPrint()
         {
             byte[] latestPrintedDocument = null;
             var directory = new DirectoryInfo(inboxFolder);
@@ -449,7 +447,7 @@ namespace GreenPrintClient
             if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
             {
                 MessageBox.Show("Could not detect latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return null;
             }
 
             try
@@ -470,6 +468,8 @@ namespace GreenPrintClient
             finally
             {
             }
+
+            return latestPrintedDocument;
         }
     }
 }
