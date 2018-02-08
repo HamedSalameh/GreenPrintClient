@@ -35,7 +35,7 @@
     </Controls:MetroWindow.RightWindowCommands>
     <Grid HorizontalAlignment="Left" Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="165" />
+            <ColumnDefinition Width="200" />
             <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
@@ -55,7 +55,7 @@
         </Grid.RowDefinitions>
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
-        <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="0">Document Name</Label>
+        <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="0" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
         <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="0" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
         <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="1">Sign via connected device</RadioButton>
         <RadioButton    Margin="5" Name="rbRemoteSign"  Grid.Column="0" Grid.Row="2">Sign via remote device</RadioButton>
@@ -72,12 +72,16 @@
         <WrapPanel Grid.Column="1" Grid.Row="3">
             <ComboBox       Margin="5"        
                             Name="cmbCountryPhonePrefix"      
-                            Width="50" HorizontalAlignment="Left" 
-                            IsEnabled="{Binding ElementName=cbSignViaSMS, Path=IsChecked}"></ComboBox>
+                            Width="70" HorizontalAlignment="Left" 
+                            IsEnabled="{Binding ElementName=cbSignViaSMS, Path=IsChecked}"
+                            SelectionChanged="cmbCountryPhonePrefix_SelectionChanged"
+                            >
+                
+            </ComboBox>
 
             <TextBox        Margin="5"        
                             Name="txtSMSNumber"               
-                            Width="150" 
+                            Width="125" 
                             HorizontalAlignment="Center"
                             IsEnabled="{Binding ElementName=cbSignViaSMS, Path=IsChecked}"></TextBox>
         </WrapPanel>
@@ -88,7 +92,7 @@
                         Grid.Row="4"
                         IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
                         >Sign via Email
-                        
+
         </CheckBox>
 
         <TextBox        Margin="5"        
@@ -103,7 +107,7 @@
                         Name="lblCCListTitle"     
                         Grid.Column="0" 
                         Grid.Row="5" 
-                        Grid.ColumnSpan="2">
+                        Grid.ColumnSpan="2" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">
             Send copy of signed document to ...
         </Label>
 
@@ -127,7 +131,7 @@
                 </Button.Style>
                 Add..
             </Button>
-            
+
         </WrapPanel>
 
         <ListBox        Margin="5" Padding="5" 
@@ -148,7 +152,7 @@
                         Height="50">
 
         </TextBlock>
-        
+
         <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="10">
         </Separator>
 

@@ -54,6 +54,11 @@ namespace GreenPrintClient
             txtAddCC.Text = "";
         }
 
+        private void cmbCountryPhonePrefix_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -103,14 +108,12 @@ namespace GreenPrintClient
 
             //cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
 
-            //if (countryCodeList != null)
-            //{
-            //    cmbCountriesPhonePrefix.DataSource = new BindingSource(countryCodeList, null);
-            //    cmbCountriesPhonePrefix.DisplayMember = "Key";
-            //    cmbCountriesPhonePrefix.ValueMember = "Value";
-
-            //    cmbCountriesPhonePrefix.SelectedIndex = 122; // Default Israel
-            //}
+            if (countryCodeList != null)
+            {
+                cmbCountryPhonePrefix.ItemsSource = countryCodeList;
+                cmbCountryPhonePrefix.DisplayMemberPath = "Key";
+                cmbCountryPhonePrefix.SelectedValuePath = "Value";
+            }
 
             string clientID = string.Empty;
             settings.TryGetValue("ClientID", out clientID);
