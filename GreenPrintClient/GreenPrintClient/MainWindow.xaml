@@ -111,12 +111,13 @@
             Send copy of signed document to ...
         </Label>
 
-        <WrapPanel Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2">
+        <WrapPanel Panel.ZIndex="1" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2">
             <TextBox    Margin="5"      
                         Name="txtAddCC"
                         Width="320">
             </TextBox>
             <Button     Margin="5" Padding="5"  
+                        Width="80"
                         Name="btnAddCCAddress" Click="btnAddCCAddress_Click"
                         >
                 <Button.Style>
@@ -161,18 +162,23 @@
                     Name="btnCancel" 
                     HorizontalContentAlignment="Center" 
                     VerticalContentAlignment="Center" 
-                    HorizontalAlignment="Right" Width="80">
+                    HorizontalAlignment="Right" Width="80" Click="btnCancel_Click">
                 Cancel
             </Button>
             <Button Margin="5" Padding="5"
                     Name="btnSubmit" 
                     HorizontalContentAlignment="Center" 
                     VerticalContentAlignment="Stretch" 
-                    Width="80">
+                    Width="80" Click="btnSubmit_Click">
                 Submit
             </Button>
-        </WrapPanel>
 
+
+        </WrapPanel>
+        <Controls:ProgressRing Name="prSubmitting"
+                               IsActive="false" 
+                               Height="10" Width="10"
+                               Grid.Column="2" Grid.Row="10" Grid.RowSpan="2"/>
     </Grid>
 
 
