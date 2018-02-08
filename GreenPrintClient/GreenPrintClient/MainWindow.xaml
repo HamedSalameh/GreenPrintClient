@@ -11,7 +11,7 @@
                       
         BorderThickness="0" 
         GlowBrush="Black"
-        ResizeMode="CanResizeWithGrip"
+        ResizeMode="NoResize"
         >
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
@@ -55,6 +55,44 @@
         </Grid.RowDefinitions>
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
+        <Image  Margin="5,0,0,0"          
+                Name="imgGreen"
+                Grid.Column="2" Grid.Row="0"  Grid.RowSpan="12" Source="Resources/grass.jpg" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5"/>
+
+        <TextBlock  Name="lblLogo" 
+                Foreground="White"
+                Grid.Column="1" Grid.RowSpan="10" 
+                RenderTransformOrigin="0.5,0.5" FontWeight="ExtraLight" 
+                Margin="110,17,-100,12" FontSize="44"
+                    Opacity="0.6"
+                    Grid.ColumnSpan="2" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TextBlock.RenderTransform>
+            GreenPrint
+
+        </TextBlock>
+        <TextBlock  Name="lblLogo2" 
+                Foreground="White"
+                    Opacity="0.6"
+                Grid.Column="1" Grid.RowSpan="10" 
+                RenderTransformOrigin="0.5,0.5" FontWeight="ExtraLight" 
+                Margin="80,17,-200,12" FontSize="20" Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90"/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </TextBlock.RenderTransform>
+            Paperless Document Signing and Printing
+
+        </TextBlock>
+
+
         <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="0" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
         <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="0" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
         <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="1">Sign via connected device</RadioButton>
@@ -76,7 +114,7 @@
                             IsEnabled="{Binding ElementName=cbSignViaSMS, Path=IsChecked}"
                             SelectionChanged="cmbCountryPhonePrefix_SelectionChanged"
                             >
-                
+
             </ComboBox>
 
             <TextBox        Margin="5"        

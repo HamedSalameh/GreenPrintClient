@@ -17,7 +17,7 @@ namespace GreenPrintClient
 
             // now set the Green accent and dark theme
             ThemeManager.ChangeAppStyle(Application.Current,
-                                        ThemeManager.GetAccent("Cyan"),
+                                        ThemeManager.GetAccent("Green"),
                                         ThemeManager.GetAppTheme("BaseLight")); // or appStyle.Item1
 
             base.OnStartup(e);

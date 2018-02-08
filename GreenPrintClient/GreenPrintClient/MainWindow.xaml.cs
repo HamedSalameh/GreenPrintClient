@@ -78,6 +78,11 @@ namespace GreenPrintClient
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
+
+            if (cmbCountryPhonePrefix.SelectedValue == null)
+            {
+                cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111]; // default to israel
+            }
             string recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
 
             // Clear any message in messages text box
@@ -190,7 +195,7 @@ namespace GreenPrintClient
                 cmbCountryPhonePrefix.DisplayMemberPath = "Key";
                 cmbCountryPhonePrefix.SelectedValuePath = "Value";
 
-                cmbCountryPhonePrefix.SelectedValue = "Israel";
+                cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111];
             }
 
             string clientID = string.Empty;
