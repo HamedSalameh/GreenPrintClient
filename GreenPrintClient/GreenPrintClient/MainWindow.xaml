@@ -7,7 +7,27 @@
 
         xmlns:local="clr-namespace:GreenPrintClient"
         mc:Ignorable="d"
-        Title="GreenPrint" Height="350" Width="525">
+        Title="GreenPrint" Height="350" Width="525" Loaded="MetroWindow_Loaded">
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Content="settings" />
+            <Button>
+                <StackPanel Orientation="Horizontal">
+                    <Rectangle Width="20"
+                   Height="20"
+                   Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_user}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                    <TextBlock Margin="4 0 0 0"
+                   VerticalAlignment="Center"
+                   Text=""
+                    Name="appbar_ClientID"/>
+                </StackPanel>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
     <Grid HorizontalAlignment="Left" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -18,15 +38,22 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid  Margin="10,10,0,0" VerticalAlignment="Top" />
-        <Label      Name="lblClientID"                      Grid.Row="0">Client ID</Label>
-        <TextBox    Name="txtClientID"  Grid.Column="1"     Grid.Row="0" Width="196">--</TextBox>
-        <Button     Name="btnChangeClientID" Grid.Column="2" Grid.Row="0" Width="96">Change ...</Button>
+        <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
-        <Label      Name="lblDocumentName" Grid.Column="0" Grid.Row="1">Document Name</Label>
-        <TextBox    Name="txtDocumentName" Grid.Column="1" Grid.Row="1" Width="Auto"></TextBox>
+        <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="0">Document Name</Label>
+        <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="0" Width="196"></TextBox>
+        <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="1">Sign via connected device</RadioButton>
+        <RadioButton    Margin="5" Name="rbRemoteSign"  Grid.Column="0" Grid.Row="2">Sign via remote device</RadioButton>
+
+        <CheckBox       Margin="5" Name="cbSignViaSMS"  Grid.Column="1" Grid.Row="3">Sign via SMS</CheckBox>
+        <ComboBox       Margin="5" Name="cmbCountries"  Grid.Column="2" Grid.Row="3"></ComboBox>
+
+        <CheckBox       Margin="5" Name="cbSignViaEmail"  Grid.Column="1" Grid.Row="4">Sign via Email</CheckBox>
     </Grid>
-    
+
 </Controls:MetroWindow>
