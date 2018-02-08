@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -29,6 +30,16 @@ namespace GreenPrintClient
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
 
+        private void cbSignViaSMS_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void txtDocumentName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -44,7 +55,38 @@ namespace GreenPrintClient
             settings = SettingManager.LoadSettings();
             countryCodeList = Countries.GetData();
 
-            //txtSMSNumber.Enabled = cbRecipientSMS.Checked;
+            settings.TryGetValue("InboxFolder", out inboxFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Application.Current.Shutdown();
+                return;
+            }
+
+            settings.TryGetValue("SubmittedFolder", out submittedFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Application.Current.Shutdown();
+                return;
+            }
+
+            settings.TryGetValue("FailedFolder", out failedFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Application.Current.Shutdown();
+                return;
+            }
+
+            settings.TryGetValue("DSORServiceURL", out serviceURL);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                System.Windows.Forms.MessageBox.Show("GreenPrint service URL could not be loaded.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Application.Current.Shutdown();
+                return;
+            }
+
             //cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
 
             //if (countryCodeList != null)

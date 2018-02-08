@@ -7,7 +7,12 @@
 
         xmlns:local="clr-namespace:GreenPrintClient"
         mc:Ignorable="d"
-        Title="GreenPrint" Height="350" Width="525" Loaded="MetroWindow_Loaded">
+        Title="GreenPrint" Height="500" Width="525" Loaded="MetroWindow_Loaded"
+                      
+        BorderThickness="0" 
+        GlowBrush="Black"
+        ResizeMode="CanResizeWithGrip"
+        >
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
             <Button Content="settings" />
@@ -30,8 +35,8 @@
     </Controls:MetroWindow.RightWindowCommands>
     <Grid HorizontalAlignment="Left" Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="165" />
+            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -41,19 +46,80 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
         <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="0">Document Name</Label>
-        <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="0" Width="196"></TextBox>
+        <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="0" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
         <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="1">Sign via connected device</RadioButton>
         <RadioButton    Margin="5" Name="rbRemoteSign"  Grid.Column="0" Grid.Row="2">Sign via remote device</RadioButton>
 
-        <CheckBox       Margin="5" Name="cbSignViaSMS"  Grid.Column="1" Grid.Row="3">Sign via SMS</CheckBox>
-        <ComboBox       Margin="5" Name="cmbCountries"  Grid.Column="2" Grid.Row="3"></ComboBox>
+        <CheckBox       Margin="25,5,5,5" Name="cbSignViaSMS"       
+                        IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
+                        Grid.Column="0" 
+                        Grid.Row="3" 
+                        Checked="cbSignViaSMS_Checked" 
+                        HorizontalAlignment="Left" 
+                        VerticalAlignment="Center">Sign via SMS</CheckBox>
+        <WrapPanel Grid.Column="1" Grid.Row="3">
+            <ComboBox       Margin="5"        Name="cmbCountryPhonePrefix"      Width="50" HorizontalAlignment="Left" 
+                            IsEnabled="{Binding ElementName=cbSignViaSMS, Path=IsChecked}"></ComboBox>
+            <TextBox        Margin="5"        Name="txtSMSNumber"               Width="150" HorizontalAlignment="Center"
+                            IsEnabled="{Binding ElementName=cbSignViaSMS, Path=IsChecked}"></TextBox>
+        </WrapPanel>
 
-        <CheckBox       Margin="5" Name="cbSignViaEmail"  Grid.Column="1" Grid.Row="4">Sign via Email</CheckBox>
+        <CheckBox       Margin="25,5,5,5" Name="cbSignViaEmail"     
+                        IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
+                        Grid.Column="0" 
+                        Grid.Row="4">Sign via Email</CheckBox>
+        <TextBox        Margin="5"        Name="txtEmailAddress"    Grid.Column="1" Grid.Row="4" Height="Auto"
+                        IsEnabled="{Binding ElementName=cbSignViaEmail, Path=IsChecked}"
+                        ></TextBox>
+
+        <Label          Margin="5"        Name="lblCCListTitle"     Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2">
+            Send copy of signed document to ...
+        </Label>
+
+        <WrapPanel Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2">
+            <TextBox    Margin="5"      Name="txtAddCC" Width="320"></TextBox>
+            <Button     Margin="5" Padding="5"  Name="btnAddCCAddress">Add ...</Button>
+        </WrapPanel>
+
+        <ListBox        Margin="5" Padding="5" Name="lstCCList"     
+                        Grid.Column="0" 
+                        Grid.Row="7" 
+                        Grid.ColumnSpan="2"
+                        Height="100"/>
+
+        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="8">
+
+        </Separator >
+
+        <TextBlock      Margin="5"  
+                        Padding="5" 
+                        Name="txtMessages" 
+                        Grid.Row="9" 
+                        Grid.ColumnSpan="2"
+                        Height="50"
+                        >
+
+        </TextBlock>
+        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="10">
+
+        </Separator>
+
+        <WrapPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="11" HorizontalAlignment="Right" >
+            <Button Margin="5" Padding="5" Name="btnCancel" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" HorizontalAlignment="Right" Width="60">Cancel</Button>
+            <Button Margin="5" Padding="5" Name="btnSubmit" HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" Width="60">Submit</Button>
+        </WrapPanel>
+
     </Grid>
+
 
 </Controls:MetroWindow>

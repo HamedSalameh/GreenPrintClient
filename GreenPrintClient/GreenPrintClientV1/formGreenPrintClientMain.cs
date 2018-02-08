@@ -424,6 +424,11 @@ namespace GreenPrintClient
             return status;
         }
 
+        private void txtEmailAddress_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private void cmbCountriesPhonePrefix_SelectedIndexChanged(object sender, EventArgs e)
         {
             //txtSMSNumber.Text = cmbCountriesPhonePrefix.SelectedValue.ToString();

@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(formGreenPrintClientMain));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.txtDocumentName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.txtClientID = new System.Windows.Forms.TextBox();
@@ -52,7 +53,6 @@
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSubmit = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -74,6 +74,15 @@
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "General Details";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(356, 28);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(92, 28);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Change ...";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // txtDocumentName
             // 
@@ -219,6 +228,7 @@
             this.txtEmailAddress.Name = "txtEmailAddress";
             this.txtEmailAddress.Size = new System.Drawing.Size(303, 22);
             this.txtEmailAddress.TabIndex = 20;
+            this.txtEmailAddress.TextChanged += new System.EventHandler(this.txtEmailAddress_TextChanged);
             this.txtEmailAddress.Leave += new System.EventHandler(this.txtEmailAddress_Leave);
             // 
             // cbRecipientEmail
@@ -305,15 +315,6 @@
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(356, 28);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(92, 28);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Change ...";
-            this.button1.UseVisualStyleBackColor = true;
             // 
             // formGreenPrintClientMain
             // 
