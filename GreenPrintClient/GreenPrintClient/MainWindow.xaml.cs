@@ -48,6 +48,9 @@ namespace GreenPrintClient
 
         private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
         {
+            if (txtAddCC.Text.Length < 5)
+                return;
+
             if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
             {
                 this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
@@ -198,6 +201,8 @@ namespace GreenPrintClient
                 cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111];
             }
 
+            rbDeviceSign.IsChecked = true;
+
             string clientID = string.Empty;
             settings.TryGetValue("ClientID", out clientID);
             if (clientID != string.Empty)
@@ -234,6 +239,31 @@ namespace GreenPrintClient
 
             return list;
         }
+
+        private void txtAddCC_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+           
+        }
+
+        private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+                {
+                    this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                        MessageDialogStyle.Affirmative);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
+                {
+                    lstCCList.Items.Add(txtAddCC.Text);
+                    txtAddCC.Text = "";
+                }
+            }
+        }
+
         private string extractPhoneNumbersCCList()
         {
             List<string> phoneNumbers = new List<string>();

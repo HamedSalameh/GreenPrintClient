@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
 
         xmlns:local="clr-namespace:GreenPrintClient"
@@ -15,20 +16,21 @@
         >
     <Controls:MetroWindow.RightWindowCommands>
         <Controls:WindowCommands>
-            <Button Content="settings" />
+            <Button Content="Settings" />
+
             <Button>
                 <StackPanel Orientation="Horizontal">
                     <Rectangle Width="20"
-                   Height="20"
-                   Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
+                        Height="20"
+                        Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_user}" />
                         </Rectangle.OpacityMask>
                     </Rectangle>
                     <TextBlock Margin="4 0 0 0"
-                   VerticalAlignment="Center"
-                   Text=""
-                    Name="appbar_ClientID"/>
+                        VerticalAlignment="Center"
+                        Text=""
+                        Name="appbar_ClientID"/>
                 </StackPanel>
             </Button>
         </Controls:WindowCommands>
@@ -152,23 +154,15 @@
         <WrapPanel Panel.ZIndex="1" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2">
             <TextBox    Margin="5"      
                         Name="txtAddCC"
-                        Width="320">
-            </TextBox>
-            <Button     Margin="5" Padding="5"  
-                        Width="80"
+                        Width="370" KeyDown="txtAddCC_KeyDown"/>
+            <Button     Margin="0" Padding="0" 
+                        Width="35" Height="35"
+                        BorderThickness="0"
                         Name="btnAddCCAddress" Click="btnAddCCAddress_Click"
+                        Style="{DynamicResource MetroCircleButtonStyle}" Background="#FF90C57D" Foreground="White"
                         >
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Text.Length, ElementName=txtAddCC}"
-                                     Value="0">
-                                <Setter Property="IsEnabled" Value="False"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-                Add..
+                <iconPacks:PackIconMaterialLight Kind="Plus" />
+
             </Button>
 
         </WrapPanel>
