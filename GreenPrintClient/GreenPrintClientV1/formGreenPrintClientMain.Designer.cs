@@ -52,6 +52,7 @@
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnSubmit = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider)).BeginInit();
@@ -60,14 +61,15 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button1);
             this.groupBox1.Controls.Add(this.txtDocumentName);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtClientID);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Location = new System.Drawing.Point(16, 15);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox1.Size = new System.Drawing.Size(487, 98);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
@@ -76,7 +78,7 @@
             // txtDocumentName
             // 
             this.txtDocumentName.Location = new System.Drawing.Point(132, 63);
-            this.txtDocumentName.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtDocumentName.Margin = new System.Windows.Forms.Padding(4);
             this.txtDocumentName.Name = "txtDocumentName";
             this.txtDocumentName.Size = new System.Drawing.Size(316, 22);
             this.txtDocumentName.TabIndex = 7;
@@ -93,10 +95,11 @@
             // 
             // txtClientID
             // 
+            this.txtClientID.Enabled = false;
             this.txtClientID.Location = new System.Drawing.Point(132, 31);
-            this.txtClientID.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtClientID.Margin = new System.Windows.Forms.Padding(4);
             this.txtClientID.Name = "txtClientID";
-            this.txtClientID.Size = new System.Drawing.Size(316, 22);
+            this.txtClientID.Size = new System.Drawing.Size(217, 22);
             this.txtClientID.TabIndex = 5;
             this.txtClientID.Leave += new System.EventHandler(this.txtClientID_Leave);
             // 
@@ -124,9 +127,9 @@
             this.groupBox2.Controls.Add(this.txtSMSNumber);
             this.groupBox2.Controls.Add(this.cbRecipientSMS);
             this.groupBox2.Location = new System.Drawing.Point(16, 121);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox2.Size = new System.Drawing.Size(487, 361);
             this.groupBox2.TabIndex = 17;
             this.groupBox2.TabStop = false;
@@ -137,7 +140,7 @@
             this.cmbCountriesPhonePrefix.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cmbCountriesPhonePrefix.FormattingEnabled = true;
             this.cmbCountriesPhonePrefix.Location = new System.Drawing.Point(165, 92);
-            this.cmbCountriesPhonePrefix.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbCountriesPhonePrefix.Margin = new System.Windows.Forms.Padding(4);
             this.cmbCountriesPhonePrefix.Name = "cmbCountriesPhonePrefix";
             this.cmbCountriesPhonePrefix.Size = new System.Drawing.Size(81, 24);
             this.cmbCountriesPhonePrefix.TabIndex = 29;
@@ -147,7 +150,7 @@
             // txtAddCC
             // 
             this.txtAddCC.Location = new System.Drawing.Point(20, 194);
-            this.txtAddCC.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtAddCC.Margin = new System.Windows.Forms.Padding(4);
             this.txtAddCC.Name = "txtAddCC";
             this.txtAddCC.Size = new System.Drawing.Size(335, 22);
             this.txtAddCC.TabIndex = 28;
@@ -155,7 +158,7 @@
             // btnAddToList
             // 
             this.btnAddToList.Location = new System.Drawing.Point(369, 191);
-            this.btnAddToList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAddToList.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddToList.Name = "btnAddToList";
             this.btnAddToList.Size = new System.Drawing.Size(100, 28);
             this.btnAddToList.TabIndex = 27;
@@ -178,7 +181,7 @@
             this.lstCCList.FormattingEnabled = true;
             this.lstCCList.ItemHeight = 16;
             this.lstCCList.Location = new System.Drawing.Point(20, 226);
-            this.lstCCList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstCCList.Margin = new System.Windows.Forms.Padding(4);
             this.lstCCList.Name = "lstCCList";
             this.lstCCList.Size = new System.Drawing.Size(448, 116);
             this.lstCCList.TabIndex = 25;
@@ -187,7 +190,7 @@
             // 
             this.rbRemoteSign.AutoSize = true;
             this.rbRemoteSign.Location = new System.Drawing.Point(12, 69);
-            this.rbRemoteSign.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbRemoteSign.Margin = new System.Windows.Forms.Padding(4);
             this.rbRemoteSign.Name = "rbRemoteSign";
             this.rbRemoteSign.Size = new System.Drawing.Size(172, 21);
             this.rbRemoteSign.TabIndex = 22;
@@ -200,7 +203,7 @@
             this.rbDeviceSign.AutoSize = true;
             this.rbDeviceSign.Checked = true;
             this.rbDeviceSign.Location = new System.Drawing.Point(12, 41);
-            this.rbDeviceSign.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rbDeviceSign.Margin = new System.Windows.Forms.Padding(4);
             this.rbDeviceSign.Name = "rbDeviceSign";
             this.rbDeviceSign.Size = new System.Drawing.Size(194, 21);
             this.rbDeviceSign.TabIndex = 21;
@@ -212,7 +215,7 @@
             // 
             this.txtEmailAddress.Enabled = false;
             this.txtEmailAddress.Location = new System.Drawing.Point(165, 126);
-            this.txtEmailAddress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtEmailAddress.Margin = new System.Windows.Forms.Padding(4);
             this.txtEmailAddress.Name = "txtEmailAddress";
             this.txtEmailAddress.Size = new System.Drawing.Size(303, 22);
             this.txtEmailAddress.TabIndex = 20;
@@ -223,7 +226,7 @@
             this.cbRecipientEmail.AutoSize = true;
             this.cbRecipientEmail.Enabled = false;
             this.cbRecipientEmail.Location = new System.Drawing.Point(37, 128);
-            this.cbRecipientEmail.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbRecipientEmail.Margin = new System.Windows.Forms.Padding(4);
             this.cbRecipientEmail.Name = "cbRecipientEmail";
             this.cbRecipientEmail.Size = new System.Drawing.Size(118, 21);
             this.cbRecipientEmail.TabIndex = 19;
@@ -235,7 +238,7 @@
             // 
             this.txtSMSNumber.Enabled = false;
             this.txtSMSNumber.Location = new System.Drawing.Point(256, 94);
-            this.txtSMSNumber.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtSMSNumber.Margin = new System.Windows.Forms.Padding(4);
             this.txtSMSNumber.Name = "txtSMSNumber";
             this.txtSMSNumber.Size = new System.Drawing.Size(212, 22);
             this.txtSMSNumber.TabIndex = 18;
@@ -246,7 +249,7 @@
             this.cbRecipientSMS.AutoSize = true;
             this.cbRecipientSMS.Enabled = false;
             this.cbRecipientSMS.Location = new System.Drawing.Point(37, 97);
-            this.cbRecipientSMS.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cbRecipientSMS.Margin = new System.Windows.Forms.Padding(4);
             this.cbRecipientSMS.Name = "cbRecipientSMS";
             this.cbRecipientSMS.Size = new System.Drawing.Size(113, 21);
             this.cbRecipientSMS.TabIndex = 17;
@@ -264,9 +267,9 @@
             this.groupBox3.Controls.Add(this.btnCancel);
             this.groupBox3.Controls.Add(this.btnSubmit);
             this.groupBox3.Location = new System.Drawing.Point(16, 489);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
             this.groupBox3.Size = new System.Drawing.Size(487, 129);
             this.groupBox3.TabIndex = 28;
             this.groupBox3.TabStop = false;
@@ -275,7 +278,7 @@
             // txtMessages
             // 
             this.txtMessages.Location = new System.Drawing.Point(20, 23);
-            this.txtMessages.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtMessages.Margin = new System.Windows.Forms.Padding(4);
             this.txtMessages.Multiline = true;
             this.txtMessages.Name = "txtMessages";
             this.txtMessages.Size = new System.Drawing.Size(448, 56);
@@ -284,7 +287,7 @@
             // btnCancel
             // 
             this.btnCancel.Location = new System.Drawing.Point(256, 87);
-            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(100, 28);
             this.btnCancel.TabIndex = 30;
@@ -295,13 +298,22 @@
             // btnSubmit
             // 
             this.btnSubmit.Location = new System.Drawing.Point(369, 87);
-            this.btnSubmit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSubmit.Margin = new System.Windows.Forms.Padding(4);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(100, 28);
             this.btnSubmit.TabIndex = 29;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
             this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(356, 28);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(92, 28);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Change ...";
+            this.button1.UseVisualStyleBackColor = true;
             // 
             // formGreenPrintClientMain
             // 
@@ -313,7 +325,7 @@
             this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "formGreenPrintClientMain";
             this.ShowInTaskbar = false;
@@ -355,6 +367,7 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnSubmit;
         private System.Windows.Forms.ComboBox cmbCountriesPhonePrefix;
+        private System.Windows.Forms.Button button1;
     }
 }
 
