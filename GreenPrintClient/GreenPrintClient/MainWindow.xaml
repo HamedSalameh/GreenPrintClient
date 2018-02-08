@@ -85,8 +85,10 @@
         <CheckBox       Margin="25,5,5,5" 
                         Name="cbSignViaEmail"     
                         Grid.Column="0" 
-                        Grid.Row="4">Sign via Email
+                        Grid.Row="4"
                         IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
+                        >Sign via Email
+                        
         </CheckBox>
 
         <TextBox        Margin="5"        
