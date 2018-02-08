@@ -73,6 +73,7 @@ namespace GreenPrintClient
         {
             settings = SettingManager.LoadSettings();
             countryCodeList = Countries.GetData();
+            countryCodeList = Countries.GetDetailedDataDic();
 
             settings.TryGetValue("InboxFolder", out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))

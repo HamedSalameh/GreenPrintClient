@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace GreenPrintClient.Helpers
@@ -167,7 +168,22 @@ namespace GreenPrintClient.Helpers
 
             list = JsonConvert.DeserializeObject<List<Country>>(_json);
 
+            Dictionary<string, string> dicCountries = list.ToDictionary(k => k.name.common, v => v.callingCode.FirstOrDefault() );
+
             return list;
+        }
+
+        public static Dictionary<string, string> GetDetailedDataDic()
+        {
+            string _json = init("countries");
+
+            List<Country> list = new List<Country>();
+
+            list = JsonConvert.DeserializeObject<List<Country>>(_json);
+
+            Dictionary<string, string> dicCountries = list.ToDictionary(k => k.name.common, v => v.callingCode.FirstOrDefault());
+
+            return dicCountries;
         }
 
         public static Dictionary<string, string> GetData()
