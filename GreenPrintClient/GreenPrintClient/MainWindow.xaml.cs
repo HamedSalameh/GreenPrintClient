@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GreenPrintClient.Helpers;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace GreenPrintClient
 {
@@ -38,6 +39,19 @@ namespace GreenPrintClient
         private void txtDocumentName_TextChanged(object sender, TextChangedEventArgs e)
         {
 
+        }
+
+        private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+            {
+                this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    MessageDialogStyle.Affirmative);
+                return;
+            }
+
+            lstCCList.Items.Add(txtAddCC.Text);
+            txtAddCC.Text = "";
         }
 
         public MainWindow()
