@@ -194,8 +194,9 @@
         </WrapPanel>
 
         <materialDesign:Snackbar        Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="9" Panel.ZIndex="1"
-                                                MessageQueue="{materialDesign:MessageQueue}"
-                                                x:Name="sbUIMessages"
+                                        MessageQueue="{materialDesign:MessageQueue}"
+                                        x:Name="sbUIMessages"
+                                        
                                         />
     </Grid>
 
