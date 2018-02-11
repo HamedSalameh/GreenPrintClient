@@ -1,40 +1,20 @@
-﻿<Controls:MetroWindow x:Class="GreenPrintClient.MainWindow"
+﻿<Window x:Class="GreenPrintClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
-
-        xmlns:local="clr-namespace:GreenPrintClient"
-        mc:Ignorable="d"
         Title="GreenPrint" Height="500" Width="525" Loaded="MetroWindow_Loaded"
-                      
+        
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+         TextElement.FontWeight="Light"
+         TextElement.FontSize="13"
+         TextOptions.TextFormattingMode="Ideal"
+         TextOptions.TextRenderingMode="Auto"
+         Background="{DynamicResource MaterialDesignPaper}"
+         FontFamily="{DynamicResource MaterialDesignFont}"
+
         BorderThickness="0" 
-        GlowBrush="Black"
         ResizeMode="NoResize"
         >
-    <Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
-            <Button Content="Settings" />
-
-            <Button>
-                <StackPanel Orientation="Horizontal">
-                    <Rectangle Width="20"
-                        Height="20"
-                        Fill="{Binding RelativeSource={RelativeSource AncestorType=Button}, Path=Foreground}">
-                        <Rectangle.OpacityMask>
-                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_user}" />
-                        </Rectangle.OpacityMask>
-                    </Rectangle>
-                    <TextBlock Margin="4 0 0 0"
-                        VerticalAlignment="Center"
-                        Text=""
-                        Name="appbar_ClientID"/>
-                </StackPanel>
-            </Button>
-        </Controls:WindowCommands>
-    </Controls:MetroWindow.RightWindowCommands>
     <Grid HorizontalAlignment="Left" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -159,9 +139,9 @@
                         Width="35" Height="35"
                         BorderThickness="0"
                         Name="btnAddCCAddress" Click="btnAddCCAddress_Click"
-                        Style="{DynamicResource MetroCircleButtonStyle}" Background="#FF90C57D" Foreground="White"
+                        Background="#FF90C57D" Foreground="White"
                         >
-                <iconPacks:PackIconMaterialLight Kind="Plus" />
+                +
 
             </Button>
 
@@ -207,11 +187,8 @@
 
 
         </WrapPanel>
-        <Controls:ProgressRing Name="prSubmitting"
-                               IsActive="false" 
-                               Height="10" Width="10"
-                               Grid.Column="2" Grid.Row="10" Grid.RowSpan="2"/>
+        
     </Grid>
 
 
-</Controls:MetroWindow>
+</Window>

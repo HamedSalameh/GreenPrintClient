@@ -17,8 +17,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GreenPrintClient.Helpers;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
 using Newtonsoft.Json;
 
 namespace GreenPrintClient
@@ -53,8 +51,8 @@ namespace GreenPrintClient
 
             if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
             {
-                this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                    MessageDialogStyle.Affirmative);
+                //this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                //    MessageDialogStyle.Affirmative);
                 return;
             }
 
@@ -99,16 +97,16 @@ namespace GreenPrintClient
             // Try get the document name if it was provided, otherwise, generate one
             if (string.IsNullOrEmpty(txtDocumentName.Text))
             {
-                var len = appbar_ClientID.Text.IndexOf("@") > 0 ? appbar_ClientID.Text.IndexOf("@") : appbar_ClientID.Text.Length - 1;
-                var dateSignature = DateTime.UtcNow.ToUnixTime();
+                //var len = appbar_ClientID.Text.IndexOf("@") > 0 ? appbar_ClientID.Text.IndexOf("@") : appbar_ClientID.Text.Length - 1;
+                //var dateSignature = DateTime.UtcNow.ToUnixTime();
 
-                var clientIDwithoutAtSign = appbar_ClientID.Text.Substring(0, len);
-                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
+                //var clientIDwithoutAtSign = appbar_ClientID.Text.Substring(0, len);
+                //documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
             }
 
             // Build DSO request
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
-            req.ClientID = appbar_ClientID.Text;
+            //req.ClientID = appbar_ClientID.Text;
             req.DocumentName = documentName;
             req.DocumentBytes = null;
             req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
@@ -136,9 +134,9 @@ namespace GreenPrintClient
 
             var re = JsonConvert.SerializeObject(req);
 
-            prSubmitting.IsActive = true;
+            //prSubmitting.IsActive = true;
             var resultStatus = submitViaWebRequest(request, re);
-            prSubmitting.IsActive = false;
+            //prSubmitting.IsActive = false;
             txtMessages.Text = resultStatus;
         }
 
@@ -207,7 +205,7 @@ namespace GreenPrintClient
             settings.TryGetValue("ClientID", out clientID);
             if (clientID != string.Empty)
             {
-                appbar_ClientID.Text = clientID;
+                //appbar_ClientID.Text = clientID;
             }
 
 
@@ -251,8 +249,8 @@ namespace GreenPrintClient
             {
                 if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
                 {
-                    this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                        MessageDialogStyle.Affirmative);
+                    //this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    //    MessageDialogStyle.Affirmative);
                     return;
                 }
 
