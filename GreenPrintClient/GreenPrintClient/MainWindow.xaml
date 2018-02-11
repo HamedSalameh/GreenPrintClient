@@ -15,6 +15,7 @@
         BorderThickness="0" 
         ResizeMode="NoResize"
         >
+    
     <Grid HorizontalAlignment="Left" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -35,6 +36,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
+        
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
         <Image  Margin="5,0,0,0"          
