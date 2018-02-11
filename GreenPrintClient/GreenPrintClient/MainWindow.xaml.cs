@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GreenPrintClient.Helpers;
+using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 
 namespace GreenPrintClient
@@ -67,6 +68,9 @@ namespace GreenPrintClient
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
+            SnackbarMessageQueue snackbarMessageQueue = new SnackbarMessageQueue();
+            snackbarMessageQueue.Enqueue("Wow, easy!");
+
             txtDocumentName.Text = "";
             txtSMSNumber.Text = "";
             txtEmailAddress.Text = "";
