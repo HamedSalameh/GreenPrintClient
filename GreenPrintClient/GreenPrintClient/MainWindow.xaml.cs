@@ -68,9 +68,6 @@ namespace GreenPrintClient
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            SnackbarMessageQueue snackbarMessageQueue = new SnackbarMessageQueue();
-            snackbarMessageQueue.Enqueue("Wow, easy!");
-
             txtDocumentName.Text = "";
             txtSMSNumber.Text = "";
             txtEmailAddress.Text = "";
