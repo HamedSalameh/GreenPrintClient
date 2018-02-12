@@ -54,9 +54,10 @@ namespace GreenPrintClient
 
             if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
             {
-                
-                //this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                //    MessageDialogStyle.Affirmative);
+                System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    "Add CC Address",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -161,43 +162,51 @@ namespace GreenPrintClient
             countryCodeList = Countries.GetDetailedDataDic();
 
             //sbUIMessageQueue = sbUIMessages.MessageQueue;
-            sbUIFatalMessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(30000));
+            //sbUIFatalMessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(30000));
             // Temporary Fatal errors message queues
-            sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
+            //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
 
             settings.TryGetValue("InboxFolder", out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
                 //System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                sbUIFatalMessageQueue.Enqueue("Unable to process printing job, could not get inbox folder name.", "Exit", () => { System.Windows.Application.Current.Shutdown(); } );
-                return;
+                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
             }
 
             settings.TryGetValue("SubmittedFolder", out submittedFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
-                //System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                sbUIFatalMessageQueue.Enqueue("Unable to process printing job, could not get inbox folder name.", "Exit", () => { System.Windows.Application.Current.Shutdown(); });
-                return;
+                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
             }
 
             settings.TryGetValue("FailedFolder", out failedFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
-                //System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                sbUIFatalMessageQueue.Enqueue("Unable to process printing job, could not get inbox folder name.", "Exit", () => { System.Windows.Application.Current.Shutdown(); });
-                return;
+                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
             }
 
             settings.TryGetValue("DSORServiceURL", out serviceURL);
             if (string.IsNullOrEmpty(inboxFolder))
             {
-                //System.Windows.Forms.MessageBox.Show("GreenPrint service URL coould not be laded.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                sbUIFatalMessageQueue.Enqueue("GreenPrint service URL coould not be laded.", "Exit", () => { System.Windows.Application.Current.Shutdown(); });
+                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
                 return;
             }
-
-            //cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
 
             if (countryCodeList != null)
             {
@@ -249,7 +258,7 @@ namespace GreenPrintClient
 
         private void txtAddCC_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-           
+
         }
 
         private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
