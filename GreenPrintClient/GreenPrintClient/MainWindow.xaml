@@ -157,7 +157,13 @@
                         Grid.Column="0" 
                         Grid.Row="7" 
                         Grid.ColumnSpan="2"
-                        Height="100" />
+                        Height="100" >
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                    <EventSetter Event="MouseDoubleClick" Handler="lstCCList_ItemMouseDoubleClick"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
 
         <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="8">
         </Separator >

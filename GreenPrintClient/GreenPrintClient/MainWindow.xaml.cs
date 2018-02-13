@@ -34,6 +34,8 @@ namespace GreenPrintClient
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
+        List<string> rcc;
+
         SnackbarMessageQueue sbUIMessageQueue;
         SnackbarMessageQueue sbUIFatalMessageQueue;
 
@@ -61,13 +63,36 @@ namespace GreenPrintClient
                 return;
             }
 
+            var newItem = txtAddCC.Text;
             lstCCList.Items.Add(txtAddCC.Text);
             txtAddCC.Text = "";
+
+            // Update registry
+            var _rcc = SettingManager.LoadRCCList();
+            if (_rcc == null)
+                _rcc = new List<string>();
+
+            // if the item is not in the list, then add it
+            if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
+            {
+                _rcc.Add(newItem);
+            }
+
+            SettingManager.updateRCCList(_rcc);
         }
 
         private void cmbCountryPhonePrefix_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void lstCCList_ItemMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+
+            lstCCList.Items.Remove(lstCCList.SelectedItem);
+            List<string> _rcc = lstCCList.Items.Cast<String>().ToList();
+
+            SettingManager.updateRCCList(_rcc);
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -158,6 +183,8 @@ namespace GreenPrintClient
         private void Init()
         {
             settings = SettingManager.LoadSettings();
+            rcc = SettingManager.LoadRCCList();
+
             countryCodeList = Countries.GetData();
             countryCodeList = Countries.GetDetailedDataDic();
 
@@ -166,6 +193,43 @@ namespace GreenPrintClient
             // Temporary Fatal errors message queues
             //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
 
+            validateCriticalSettings();
+            populateCCList();
+
+            if (countryCodeList != null)
+            {
+                cmbCountryPhonePrefix.ItemsSource = countryCodeList;
+                cmbCountryPhonePrefix.DisplayMemberPath = "Key";
+                cmbCountryPhonePrefix.SelectedValuePath = "Value";
+
+                cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111];
+            }
+
+            rbDeviceSign.IsChecked = true;
+
+            string clientID = string.Empty;
+            settings.TryGetValue("ClientID", out clientID);
+            if (clientID != string.Empty)
+            {
+                //appbar_ClientID.Text = clientID;
+            }
+
+
+        }
+
+        private void populateCCList()
+        {
+            if (rcc != null && rcc.Count > 0)
+            {
+                foreach (var item in rcc)
+                {
+                    lstCCList.Items.Add(item);
+                }
+            }
+        }
+
+        private void validateCriticalSettings()
+        {
             settings.TryGetValue("InboxFolder", out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
@@ -205,28 +269,7 @@ namespace GreenPrintClient
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
                 System.Windows.Application.Current.Shutdown();
-                return;
             }
-
-            if (countryCodeList != null)
-            {
-                cmbCountryPhonePrefix.ItemsSource = countryCodeList;
-                cmbCountryPhonePrefix.DisplayMemberPath = "Key";
-                cmbCountryPhonePrefix.SelectedValuePath = "Value";
-
-                cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111];
-            }
-
-            rbDeviceSign.IsChecked = true;
-
-            string clientID = string.Empty;
-            settings.TryGetValue("ClientID", out clientID);
-            if (clientID != string.Empty)
-            {
-                //appbar_ClientID.Text = clientID;
-            }
-
-
         }
 
         private string extractEmailCCList()
