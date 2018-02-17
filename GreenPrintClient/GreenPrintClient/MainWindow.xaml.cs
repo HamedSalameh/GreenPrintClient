@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -104,8 +106,27 @@ namespace GreenPrintClient
             txtMessages.Text = "";
         }
 
+        private async void validateClientIDAsync()
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:64195/");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            string clientID = "hamedsalami@gmail.com";
+            string path = @"http://localhost:7071/api/u/" + clientID;
+            HttpResponseMessage response = await client.GetAsync(path);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Pre conditions met
+            }
+        }
+
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            validateClientIDAsync();
+
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
