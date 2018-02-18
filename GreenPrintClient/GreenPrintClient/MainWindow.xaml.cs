@@ -29,7 +29,7 @@ namespace GreenPrintClient
     /// </summary>
     public partial class MainWindow
     {
-        private string PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder;
+        private string GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
         bool submitting = false;
         private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
         private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
@@ -109,12 +109,12 @@ namespace GreenPrintClient
         private async Task<bool> validateClientIDAsync()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:64195/");
+            client.BaseAddress = new Uri(GPServicesBase);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            string clientID = "hamedsalami@gmail.com";
-            string path = @"http://localhost:7071/api/ums/" + clientID+"1";
+            clientID = "hamedsalami@gmail.com";
+            string path = $"{GPServicesBase}{UMServiceURL}/" + clientID;
             HttpResponseMessage response = await client.GetAsync(path);
 
             if (!response.IsSuccessStatusCode)
@@ -154,7 +154,7 @@ namespace GreenPrintClient
             // Clear any message in messages text box
             txtMessages.Text = "";
 
-            WebRequest request = WebRequest.Create(PRServiceURL);
+            WebRequest request = WebRequest.Create($"{GPServicesBase}{PRServiceURL}");
             // Set the Method property of the request to POST.  
             request.Method = "POST";
             // Create POST data and convert it to a byte array.  
@@ -242,7 +242,6 @@ namespace GreenPrintClient
 
             rbDeviceSign.IsChecked = true;
 
-            string clientID = string.Empty;
             settings.TryGetValue("ClientID", out clientID);
             if (clientID != string.Empty)
             {
@@ -296,7 +295,17 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("UMSURL", out UMServiceURL);
+            settings.TryGetValue("GPServicesBase", out GPServicesBase);
+            if (string.IsNullOrEmpty(GPServicesBase))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("UMS", out UMServiceURL);
             if (string.IsNullOrEmpty(UMServiceURL))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
@@ -306,7 +315,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("PRSURL", out PRServiceURL);
+            settings.TryGetValue("PRS", out PRServiceURL);
             if (string.IsNullOrEmpty(PRServiceURL))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
