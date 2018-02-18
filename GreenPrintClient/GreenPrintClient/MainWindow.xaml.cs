@@ -29,7 +29,7 @@ namespace GreenPrintClient
     /// </summary>
     public partial class MainWindow
     {
-        private string serviceURL, inboxFolder, submittedFolder, failedFolder;
+        private string PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder;
         bool submitting = false;
         private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
         private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
@@ -106,7 +106,7 @@ namespace GreenPrintClient
             txtMessages.Text = "";
         }
 
-        private async void validateClientIDAsync()
+        private async Task<bool> validateClientIDAsync()
         {
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:64195/");
@@ -114,18 +114,32 @@ namespace GreenPrintClient
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             string clientID = "hamedsalami@gmail.com";
-            string path = @"http://localhost:7071/api/u/" + clientID;
+            string path = @"http://localhost:7071/api/ums/" + clientID+"1";
             HttpResponseMessage response = await client.GetAsync(path);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 // Pre conditions met
+                var clientIDStatus = response.Content.ReadAsStringAsync().Result;
+
+                int statusCode = -2;
+                int.TryParse(clientIDStatus, out statusCode);
+
+                var status = (Enums.UserStatus)statusCode;
+
+                return false;
             }
+
+            return true;
         }
 
-        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
-            validateClientIDAsync();
+            bool validationResult = await validateClientIDAsync();
+            if (validationResult == false)
+            {
+                return;
+            }
 
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
@@ -140,7 +154,7 @@ namespace GreenPrintClient
             // Clear any message in messages text box
             txtMessages.Text = "";
 
-            WebRequest request = WebRequest.Create(serviceURL);
+            WebRequest request = WebRequest.Create(PRServiceURL);
             // Set the Method property of the request to POST.  
             request.Method = "POST";
             // Create POST data and convert it to a byte array.  
@@ -251,10 +265,10 @@ namespace GreenPrintClient
 
         private void validateCriticalSettings()
         {
+
             settings.TryGetValue("InboxFolder", out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
-                //System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
@@ -263,7 +277,7 @@ namespace GreenPrintClient
             }
 
             settings.TryGetValue("SubmittedFolder", out submittedFolder);
-            if (string.IsNullOrEmpty(inboxFolder))
+            if (string.IsNullOrEmpty(submittedFolder))
             {
                 System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
                     "GreenPrint Client Initialization",
@@ -273,7 +287,7 @@ namespace GreenPrintClient
             }
 
             settings.TryGetValue("FailedFolder", out failedFolder);
-            if (string.IsNullOrEmpty(inboxFolder))
+            if (string.IsNullOrEmpty(failedFolder))
             {
                 System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
                     "GreenPrint Client Initialization",
@@ -282,8 +296,18 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("DSORServiceURL", out serviceURL);
-            if (string.IsNullOrEmpty(inboxFolder))
+            settings.TryGetValue("UMSURL", out UMServiceURL);
+            if (string.IsNullOrEmpty(UMServiceURL))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("PRSURL", out PRServiceURL);
+            if (string.IsNullOrEmpty(PRServiceURL))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
                     "GreenPrint Client Initialization",
