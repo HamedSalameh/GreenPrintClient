@@ -41,6 +41,7 @@ namespace GreenPrintClient
 
         SnackbarMessageQueue sbUIMessageQueue;
         SnackbarMessageQueue sbUIFatalMessageQueue;
+        ChangeClientID changeClientID;
 
         private void cbSignViaSMS_Checked(object sender, RoutedEventArgs e)
         {
@@ -114,15 +115,20 @@ namespace GreenPrintClient
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            clientID = "hamedsalam1i@gmail.com";
             string path = $"{GPServicesBase}{UMServiceURL}/" + clientID;
             HttpResponseMessage response = await client.GetAsync(path);
 
             if (!response.IsSuccessStatusCode)
             {
                 // Pre conditions met
-                var res = response.Content.ReadAsStringAsync().Result;
+                var res = response.Content?.ReadAsStringAsync()?.Result;
                 ClientValidationResponse clientValidationResponse = null;
+
+                if (string.IsNullOrEmpty(res))
+                {
+                    txtMessages.Inlines.Add("Could not parse server response, please try again");
+                    return false;
+                }
 
                 try
                 {
@@ -159,9 +165,15 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            // Reset the messages windows
+            txtMessages.Text = "";
+            // Show the loading spinnger
+            pbLoading.Visibility = Visibility.Visible;
+            // Execute pre-conditions validations
             bool validationResult = await validateClientIDAsync();
             if (validationResult == false)
             {
+                pbLoading.Visibility = Visibility.Hidden;
                 return;
             }
 
@@ -227,6 +239,8 @@ namespace GreenPrintClient
             var resultStatus = submitViaWebRequest(request, re);
             //prSubmitting.IsActive = false;
             txtMessages.Text = resultStatus;
+
+            pbLoading.Visibility = Visibility.Hidden;
         }
 
         public MainWindow()
@@ -255,6 +269,8 @@ namespace GreenPrintClient
             validateCriticalSettings();
             populateCCList();
 
+            pbLoading.Visibility = Visibility.Hidden;
+
             if (countryCodeList != null)
             {
                 cmbCountryPhonePrefix.ItemsSource = countryCodeList;
@@ -269,6 +285,7 @@ namespace GreenPrintClient
             settings.TryGetValue("ClientID", out clientID);
             if (clientID != string.Empty)
             {
+                txtClientID.Text = clientID;
                 //appbar_ClientID.Text = clientID;
             }
 
@@ -348,6 +365,20 @@ namespace GreenPrintClient
                     MessageBoxImage.Error);
                 System.Windows.Application.Current.Shutdown();
             }
+        }
+
+        private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
+        {
+            changeClientID = new ChangeClientID(clientID);
+            changeClientID.Closed += ChangeClientID_Closed;
+
+            changeClientID.ShowDialog();
+        }
+
+        private void ChangeClientID_Closed(object sender, EventArgs e)
+        {
+            this.clientID = changeClientID.NewClientID;
+            txtClientID.Text = clientID;
         }
 
         private string extractEmailCCList()

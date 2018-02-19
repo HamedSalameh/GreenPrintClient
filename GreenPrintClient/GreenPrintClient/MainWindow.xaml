@@ -1,7 +1,7 @@
 ﻿<Window x:Class="GreenPrintClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="GreenPrint" Height="520" Width="525" Loaded="MetroWindow_Loaded"
+        Title="GreenPrint" Height="550" Width="525" Loaded="MetroWindow_Loaded"
         
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -35,14 +35,29 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
         <Image  Margin="5,0,0,0"          
                 Name="imgGreen"
-                Grid.Column="2" Grid.Row="0"  Grid.RowSpan="12" Source="Resources/grass.jpg" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5"/>
-
+                Grid.Column="2" Grid.Row="0"  Grid.RowSpan="13" Source="Resources/grass.jpg" Stretch="UniformToFill" RenderTransformOrigin="0.5,0.5"/>
+        <materialDesign:Card
+                Margin="5"
+                Name="pbLoading"
+                Grid.Column="2"
+                Grid.Row="11"
+                Grid.RowSpan="2"
+                Width="40"
+                UniformCornerRadius="14"
+                Padding="4">
+                        <ProgressBar  
+                            Style="{StaticResource MaterialDesignCircularProgressBar}"
+                            Value="50"
+                            IsIndeterminate="True" />
+        </materialDesign:Card>
+        
         <TextBlock  Name="lblLogo" 
                 Foreground="White"
                 Grid.Column="1" Grid.RowSpan="10" 
@@ -76,22 +91,37 @@
 
         </TextBlock>
 
+        <Label          Margin="5" Name="lblClientID"  FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Username</Label>
+        <WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0">
+            <TextBox IsEnabled="False" HorizontalAlignment="Right" Margin="5" Name="txtClientID"  Width="170"></TextBox>
+            <Button 
+                    Name="btnChangeClientID"
+                    Padding="0"
+                    HorizontalContentAlignment="Center" 
+                    VerticalContentAlignment="Center" 
+                    HorizontalAlignment="Right" Width="35" Height="35" Click="btnChangeClientID_Click"
+                    Style="{DynamicResource MaterialDesignFloatingActionButton}">
+                    <materialDesign:PackIcon Kind="AccountConvert"/>
+            </Button>
+                    
+        </WrapPanel>
+        
 
-        <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="0" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
-        <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="0" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
-        <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="1">Sign via connected device</RadioButton>
-        <RadioButton    Margin="5" Name="rbRemoteSign"  Grid.Column="0" Grid.Row="2">Sign via remote device</RadioButton>
+        <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="1" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
+        <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="1" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
+        <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="2">Sign via connected device</RadioButton>
+        <RadioButton    Margin="5" Name="rbRemoteSign"  Grid.Column="0" Grid.Row="3">Sign via remote device</RadioButton>
 
         <CheckBox       Margin="25,5,5,5" Name="cbSignViaSMS"       
                         IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
                         Grid.Column="0" 
-                        Grid.Row="3" 
+                        Grid.Row="4" 
                         Checked="cbSignViaSMS_Checked" 
                         HorizontalAlignment="Left" 
                         VerticalAlignment="Center">Sign via SMS
         </CheckBox>
 
-        <WrapPanel Grid.Column="1" Grid.Row="3">
+        <WrapPanel Grid.Column="1" Grid.Row="4">
             <ComboBox       Margin="5"        
                             Name="cmbCountryPhonePrefix"      
                             Width="70" HorizontalAlignment="Left" 
@@ -111,7 +141,7 @@
         <CheckBox       Margin="25,5,5,5" 
                         Name="cbSignViaEmail"     
                         Grid.Column="0" 
-                        Grid.Row="4"
+                        Grid.Row="5"
                         IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
                         >Sign via Email
 
@@ -120,7 +150,7 @@
         <TextBox        Margin="5"        
                         Name="txtEmailAddress"    
                         Grid.Column="1" 
-                        Grid.Row="4" 
+                        Grid.Row="5" 
                         Height="Auto"
                         IsEnabled="{Binding ElementName=cbSignViaEmail, Path=IsChecked}">
         </TextBox>
@@ -128,12 +158,12 @@
         <Label          Margin="5"        
                         Name="lblCCListTitle"     
                         Grid.Column="0" 
-                        Grid.Row="5" 
+                        Grid.Row="6" 
                         Grid.ColumnSpan="2" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">
             Send copy of signed document to ...
         </Label>
 
-        <WrapPanel Panel.ZIndex="1" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2">
+        <WrapPanel Panel.ZIndex="1" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2">
             <TextBox    Margin="5"      
                         Name="txtAddCC"
                         Width="370" KeyDown="txtAddCC_KeyDown"/>
@@ -155,7 +185,7 @@
         <ListBox        Margin="5" Padding="5" 
                         Name="lstCCList"     
                         Grid.Column="0" 
-                        Grid.Row="7" 
+                        Grid.Row="8" 
                         Grid.ColumnSpan="2"
                         Height="100" >
             <ListBox.ItemContainerStyle>
@@ -165,23 +195,23 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
 
-        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="8">
+        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="9">
         </Separator >
 
         <TextBlock      Margin="5"  
                         Padding="5" 
                         Name="txtMessages" 
                         TextWrapping="WrapWithOverflow"
-                        Grid.Row="9" 
+                        Grid.Row="10" 
                         Grid.ColumnSpan="2"
                         Height="50">
 
         </TextBlock>
 
-        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="10">
+        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="11">
         </Separator>
 
-        <WrapPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="11" HorizontalAlignment="Right" >
+        <WrapPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="12" HorizontalAlignment="Right" >
             <Button Margin="5" Padding="5" 
                     Name="btnCancel" 
                     HorizontalContentAlignment="Center" 
@@ -202,7 +232,7 @@
             </Button>
         </WrapPanel>
 
-        <materialDesign:Snackbar        Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="9" Panel.ZIndex="1"
+        <materialDesign:Snackbar        Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="10" Panel.ZIndex="1"
                                         MessageQueue="{materialDesign:MessageQueue}"
                                         x:Name="sbUIMessages"
                                         
