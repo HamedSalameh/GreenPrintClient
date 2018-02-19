@@ -379,6 +379,8 @@ namespace GreenPrintClient
         {
             this.clientID = changeClientID.NewClientID;
             txtClientID.Text = clientID;
+
+            SettingManager.UpdateClientID(clientID);
         }
 
         private string extractEmailCCList()
