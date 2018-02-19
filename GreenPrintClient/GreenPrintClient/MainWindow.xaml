@@ -171,6 +171,7 @@
         <TextBlock      Margin="5"  
                         Padding="5" 
                         Name="txtMessages" 
+                        TextWrapping="WrapWithOverflow"
                         Grid.Row="9" 
                         Grid.ColumnSpan="2"
                         Height="50">

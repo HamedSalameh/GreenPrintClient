@@ -19,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GreenPrintClient.Helpers;
+using GreenPrintClient.Helpers.Contracts;
 using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 
@@ -113,24 +114,47 @@ namespace GreenPrintClient
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            clientID = "hamedsalami@gmail.com";
+            clientID = "hamedsalam1i@gmail.com";
             string path = $"{GPServicesBase}{UMServiceURL}/" + clientID;
             HttpResponseMessage response = await client.GetAsync(path);
 
             if (!response.IsSuccessStatusCode)
             {
                 // Pre conditions met
-                var clientIDStatus = response.Content.ReadAsStringAsync().Result;
+                var res = response.Content.ReadAsStringAsync().Result;
+                ClientValidationResponse clientValidationResponse = null;
 
-                int statusCode = -2;
-                int.TryParse(clientIDStatus, out statusCode);
+                try
+                {
+                    clientValidationResponse = JsonConvert.DeserializeObject<ClientValidationResponse>(res.Remove(0, 1).Replace("\\", "").Remove(res.Remove(0, 1).Replace("\\", "").Length - 1));
 
-                var status = (Enums.UserStatus)statusCode;
+                    txtMessages.Inlines.Add(clientValidationResponse.Message);
+                    txtMessages.Inlines.Add(": ");
+                    Hyperlink hyperLink = new Hyperlink()
+                    {
+                        NavigateUri = new Uri(clientValidationResponse.HyperLink)
+                    };
+                    hyperLink.Inlines.Add(clientValidationResponse.HyperLinkName);
+                    hyperLink.RequestNavigate += HyperLink_RequestNavigate;
 
+                    txtMessages.Inlines.Add(hyperLink);
+                }
+                catch
+                {
+                    clientValidationResponse = new ClientValidationResponse();
+                    clientValidationResponse.Message = res.Replace("\"", "").Replace("\\", "");
+
+                    txtMessages.Inlines.Add(clientValidationResponse.Message);
+                }
                 return false;
             }
 
             return true;
+        }
+
+        private void HyperLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(e.Uri.ToString());
         }
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
