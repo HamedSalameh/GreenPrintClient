@@ -30,7 +30,7 @@ namespace GreenPrintClient
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
+            DialogResult = false;
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)

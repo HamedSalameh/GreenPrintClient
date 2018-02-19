@@ -107,10 +107,11 @@
         </WrapPanel>
         
 
-        <Label          Margin="5" Name="lblDocumentName"  Grid.Column="0" Grid.Row="1" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
-        <TextBox        Margin="5" Name="txtDocumentName"  Grid.Column="1" Grid.Row="1" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
-        <RadioButton    Margin="5" Name="rbDeviceSign"  Grid.Column="0" Grid.Row="2">Sign via connected device</RadioButton>
-        <RadioButton    Margin="5" Name="rbRemoteSign"  Grid.Column="0" Grid.Row="3">Sign via remote device</RadioButton>
+        <Label          Margin="5" Name="lblDocumentName"       Grid.Column="0" Grid.Row="1" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
+        <TextBox        Margin="5" Name="txtDocumentName"       Grid.Column="1" Grid.Row="1" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
+        <RadioButton    VerticalAlignment="Center" Margin="5" Name="rbDeviceSign"          Grid.Column="0" Grid.Row="2">Sign via connected device</RadioButton>
+        <ComboBox       VerticalAlignment="Center" Margin="5" Name="cbConnectedDevices"    Grid.Column="1" Grid.Row="2" IsEnabled="False"></ComboBox>
+        <RadioButton    Margin="5" Name="rbRemoteSign"          Grid.Column="0" Grid.Row="3">Sign via remote device</RadioButton>
 
         <CheckBox       Margin="25,5,5,5" Name="cbSignViaSMS"       
                         IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"

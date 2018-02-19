@@ -31,9 +31,6 @@ namespace GreenPrintClient
     public partial class MainWindow
     {
         private string GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
-        bool submitting = false;
-        private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
-        private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
@@ -377,10 +374,13 @@ namespace GreenPrintClient
 
         private void ChangeClientID_Closed(object sender, EventArgs e)
         {
-            this.clientID = changeClientID.NewClientID;
-            txtClientID.Text = clientID;
-
-            SettingManager.UpdateClientID(clientID);
+            if (changeClientID.DialogResult == true)
+            {
+                SettingManager.UpdateClientID(clientID);
+                this.clientID = changeClientID.NewClientID;
+                txtClientID.Text = clientID;
+            }
+                
         }
 
         private string extractEmailCCList()
