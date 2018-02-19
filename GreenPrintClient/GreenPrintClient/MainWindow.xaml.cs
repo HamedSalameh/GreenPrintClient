@@ -198,16 +198,16 @@ namespace GreenPrintClient
             // Try get the document name if it was provided, otherwise, generate one
             if (string.IsNullOrEmpty(txtDocumentName.Text))
             {
-                //var len = appbar_ClientID.Text.IndexOf("@") > 0 ? appbar_ClientID.Text.IndexOf("@") : appbar_ClientID.Text.Length - 1;
-                //var dateSignature = DateTime.UtcNow.ToUnixTime();
+                var len = clientID.IndexOf("@") > 0 ? clientID.IndexOf("@") : clientID.Length - 1;
+                var dateSignature = DateTime.UtcNow.ToUnixTime();
 
-                //var clientIDwithoutAtSign = appbar_ClientID.Text.Substring(0, len);
-                //documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
+                var clientIDwithoutAtSign = clientID.Substring(0, len);
+                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
             }
 
             // Build DSO request
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
-            //req.ClientID = appbar_ClientID.Text;
+            req.ClientID = clientID;
             req.DocumentName = documentName;
             req.DocumentBytes = null;
             req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
@@ -421,6 +421,10 @@ namespace GreenPrintClient
             {
                 if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
                 {
+                    System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    "Add CC Address",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                     //this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
                     //    MessageDialogStyle.Affirmative);
                     return;
