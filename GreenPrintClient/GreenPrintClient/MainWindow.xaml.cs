@@ -328,7 +328,7 @@ namespace GreenPrintClient
             // Create POST data and convert it to a byte array.  
 
             // Try get the document name if it was provided, otherwise, generate one
-            documentName = buildDocumentName(documentName);
+            documentName = buildDocumentName();
 
             // Build DSO request
             DocumentSigningOperationRequest req = buildDSORequest(documentName, CCList_emails, CCList_phones, recipientSMSNumber);
@@ -370,8 +370,8 @@ namespace GreenPrintClient
         {
             if (changeClientID.DialogResult == true)
             {
-                SettingManager.UpdateClientID(clientID);
                 clientID = changeClientID.NewClientID;
+                SettingManager.UpdateClientID(clientID);
                 txtClientID.Text = clientID;
             }
         }
@@ -403,8 +403,10 @@ namespace GreenPrintClient
         }
 
         // Private helper methods
-        private string buildDocumentName(string documentName)
+        private string buildDocumentName()
         {
+            string documentName = txtDocumentName.Text;
+
             if (string.IsNullOrEmpty(txtDocumentName.Text))
             {
                 var len = clientID.IndexOf("@") > 0 ? clientID.IndexOf("@") : clientID.Length - 1;
