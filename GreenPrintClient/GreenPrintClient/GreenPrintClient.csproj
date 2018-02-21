@@ -68,6 +68,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomControls\ccAddPhoneNumber.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -80,6 +84,9 @@
       <DependentUpon>ChangeClientID.xaml</DependentUpon>
     </Compile>
     <Compile Include="Consts.cs" />
+    <Compile Include="CustomControls\ccAddPhoneNumber.xaml.cs">
+      <DependentUpon>ccAddPhoneNumber.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DocumentSigningOperationRequest.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

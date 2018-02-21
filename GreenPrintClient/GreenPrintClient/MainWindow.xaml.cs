@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GreenPrintClient.CustomControls;
 using GreenPrintClient.Helpers;
 using GreenPrintClient.Helpers.Contracts;
 using MaterialDesignThemes.Wpf;
@@ -89,7 +90,7 @@ namespace GreenPrintClient
 
             return true;
         }
-        
+
         public MainWindow()
         {
             InitializeComponent();
@@ -225,37 +226,37 @@ namespace GreenPrintClient
 
         }
 
-        private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
-        {
-            if (txtAddCC.Text.Length < 5)
-                return;
+        //private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (txtAddCC.Text.Length < 5)
+        //        return;
 
-            if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-            {
-                System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                    "Add CC Address",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                return;
-            }
+        //    if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+        //    {
+        //        System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+        //            "Add CC Address",
+        //            MessageBoxButton.OK,
+        //            MessageBoxImage.Warning);
+        //        return;
+        //    }
 
-            var newItem = txtAddCC.Text;
-            lstCCList.Items.Add(txtAddCC.Text);
-            txtAddCC.Text = "";
+        //    var newItem = txtAddCC.Text;
+        //    lstCCList.Items.Add(txtAddCC.Text);
+        //    txtAddCC.Text = "";
 
-            // Update registry
-            var _rcc = SettingManager.LoadRCCList();
-            if (_rcc == null)
-                _rcc = new List<string>();
+        //    // Update registry
+        //    var _rcc = SettingManager.LoadRCCList();
+        //    if (_rcc == null)
+        //        _rcc = new List<string>();
 
-            // if the item is not in the list, then add it
-            if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
-            {
-                _rcc.Add(newItem);
-            }
+        //    // if the item is not in the list, then add it
+        //    if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
+        //    {
+        //        _rcc.Add(newItem);
+        //    }
 
-            SettingManager.updateRCCList(_rcc);
-        }
+        //    SettingManager.updateRCCList(_rcc);
+        //}
 
         private void cmbCountryPhonePrefix_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -286,7 +287,7 @@ namespace GreenPrintClient
             {
                 System.Diagnostics.Process.Start(e.Uri.ToString());
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
                 System.Windows.MessageBox.Show($"GreenPrint client was not able to navigate to {e?.Uri?.ToString()} due to internal error.\r\n{Ex.Message}",
                     "Navigate",
@@ -357,7 +358,7 @@ namespace GreenPrintClient
 
             pbLoading.Visibility = Visibility.Hidden;
         }
-        
+
         private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
         {
             changeClientID = new ChangeClientID(clientID);
@@ -381,26 +382,33 @@ namespace GreenPrintClient
 
         }
 
-        private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void btnAddCC_SMSNumber_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-                {
-                    System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                    "Add CC Address",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
-                {
-                    lstCCList.Items.Add(txtAddCC.Text);
-                    txtAddCC.Text = "";
-                }
-            }
+            controlAddPhoneNumber.IsEnabled = true;
+            controlAddPhoneNumber.SetItemSource(countryCodeList, 111);
+            controlAddPhoneNumber.Visibility = Visibility.Visible;
         }
+
+        //private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        //{
+        //    if (e.Key == Key.Enter)
+        //    {
+        //        if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+        //        {
+        //            System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+        //            "Add CC Address",
+        //            MessageBoxButton.OK,
+        //            MessageBoxImage.Warning);
+        //            return;
+        //        }
+
+        //        if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
+        //        {
+        //            lstCCList.Items.Add(txtAddCC.Text);
+        //            txtAddCC.Text = "";
+        //        }
+        //    }
+        //}
 
         // Private helper methods
         private string buildDocumentName()

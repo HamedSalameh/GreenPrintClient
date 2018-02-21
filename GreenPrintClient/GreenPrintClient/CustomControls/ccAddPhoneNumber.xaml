@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="GreenPrintClient.CustomControls.ccAddPhoneNumber"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:GreenPrintClient.CustomControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="300"
+             Background="LightBlue">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <WrapPanel Grid.Column="0" Grid.Row="0">
+            <ComboBox       Margin="5"        
+                            Name="cmbCountryPhonePrefix"      
+                            Width="70" HorizontalAlignment="Left" 
+                            SelectionChanged="cmbCountryPhonePrefix_SelectionChanged"
+                            >
+            </ComboBox>
+
+            <TextBox        Margin="5"        
+                            Name="txtSMSNumber"               
+                            Width="125" 
+                            HorizontalAlignment="Center"
+                            ></TextBox>
+        </WrapPanel>
+
+    </Grid>
+</UserControl>
