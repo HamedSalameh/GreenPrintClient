@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,8 +19,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using GreenPrintClient.Helpers;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
+using GreenPrintClient.Helpers.Contracts;
+using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 
 namespace GreenPrintClient
@@ -28,14 +30,191 @@ namespace GreenPrintClient
     /// </summary>
     public partial class MainWindow
     {
-        private string serviceURL, inboxFolder, submittedFolder, failedFolder;
-        bool submitting = false;
-        private readonly string prodURL = "https://requestharbor.azurewebsites.net/api/RequestHarbor";
-        private readonly string localURL = "http://localhost:7071/api/RequestHarbor";
+        private string GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
+        List<string> rcc;
 
+        SnackbarMessageQueue sbUIMessageQueue;
+        SnackbarMessageQueue sbUIFatalMessageQueue;
+        ChangeClientID changeClientID;
+
+        private async Task<bool> validateClientIDAsync()
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(GPServicesBase);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            string path = $"{GPServicesBase}{UMServiceURL}/" + clientID;
+            HttpResponseMessage response = await client.GetAsync(path);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Pre conditions met
+                var res = response.Content?.ReadAsStringAsync()?.Result;
+                ClientValidationResponse clientValidationResponse = null;
+
+                if (string.IsNullOrEmpty(res))
+                {
+                    txtMessages.Inlines.Add("Could not parse server response, please try again");
+                    return false;
+                }
+
+                try
+                {
+                    clientValidationResponse = JsonConvert.DeserializeObject<ClientValidationResponse>(res.Remove(0, 1).Replace("\\", "").Remove(res.Remove(0, 1).Replace("\\", "").Length - 1));
+
+                    txtMessages.Inlines.Add(clientValidationResponse.Message);
+                    txtMessages.Inlines.Add(": ");
+                    Hyperlink hyperLink = new Hyperlink()
+                    {
+                        NavigateUri = new Uri(clientValidationResponse.HyperLink)
+                    };
+                    hyperLink.Inlines.Add(clientValidationResponse.HyperLinkName);
+                    hyperLink.RequestNavigate += HyperLink_RequestNavigate;
+
+                    txtMessages.Inlines.Add(hyperLink);
+                }
+                catch
+                {
+                    clientValidationResponse = new ClientValidationResponse();
+                    clientValidationResponse.Message = res.Replace("\"", "").Replace("\\", "");
+
+                    txtMessages.Inlines.Add(clientValidationResponse.Message);
+                }
+                return false;
+            }
+
+            return true;
+        }
+        
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+
+        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Init();
+        }
+
+        private void Init()
+        {
+            settings = SettingManager.LoadSettings();
+            rcc = SettingManager.LoadRCCList();
+
+            countryCodeList = Countries.GetData();
+            countryCodeList = Countries.GetDetailedDataDic();
+
+            //sbUIMessageQueue = sbUIMessages.MessageQueue;
+            //sbUIFatalMessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(30000));
+            // Temporary Fatal errors message queues
+            //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
+
+            validateCriticalSettings();
+            populateCCList();
+
+            pbLoading.Visibility = Visibility.Hidden;
+
+            if (countryCodeList != null)
+            {
+                cmbCountryPhonePrefix.ItemsSource = countryCodeList;
+                cmbCountryPhonePrefix.DisplayMemberPath = "Key";
+                cmbCountryPhonePrefix.SelectedValuePath = "Value";
+
+                cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111];
+            }
+
+            rbDeviceSign.IsChecked = true;
+
+            settings.TryGetValue("ClientID", out clientID);
+            if (clientID != string.Empty)
+            {
+                txtClientID.Text = clientID;
+                //appbar_ClientID.Text = clientID;
+            }
+
+
+        }
+
+        private void populateCCList()
+        {
+            if (rcc != null && rcc.Count > 0)
+            {
+                foreach (var item in rcc)
+                {
+                    lstCCList.Items.Add(item);
+                }
+            }
+        }
+
+        private void validateCriticalSettings()
+        {
+
+            settings.TryGetValue("InboxFolder", out inboxFolder);
+            if (string.IsNullOrEmpty(inboxFolder))
+            {
+                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("SubmittedFolder", out submittedFolder);
+            if (string.IsNullOrEmpty(submittedFolder))
+            {
+                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("FailedFolder", out failedFolder);
+            if (string.IsNullOrEmpty(failedFolder))
+            {
+                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("GPServicesBase", out GPServicesBase);
+            if (string.IsNullOrEmpty(GPServicesBase))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("UMS", out UMServiceURL);
+            if (string.IsNullOrEmpty(UMServiceURL))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("PRS", out PRServiceURL);
+            if (string.IsNullOrEmpty(PRServiceURL))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+        }
+
+        // Event Handlers
         private void cbSignViaSMS_Checked(object sender, RoutedEventArgs e)
         {
 
@@ -53,18 +232,43 @@ namespace GreenPrintClient
 
             if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
             {
-                this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                    MessageDialogStyle.Affirmative);
+                System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    "Add CC Address",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
+            var newItem = txtAddCC.Text;
             lstCCList.Items.Add(txtAddCC.Text);
             txtAddCC.Text = "";
+
+            // Update registry
+            var _rcc = SettingManager.LoadRCCList();
+            if (_rcc == null)
+                _rcc = new List<string>();
+
+            // if the item is not in the list, then add it
+            if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
+            {
+                _rcc.Add(newItem);
+            }
+
+            SettingManager.updateRCCList(_rcc);
         }
 
         private void cmbCountryPhonePrefix_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+        }
+
+        private void lstCCList_ItemMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+
+            lstCCList.Items.Remove(lstCCList.SelectedItem);
+            List<string> _rcc = lstCCList.Items.Cast<String>().ToList();
+
+            SettingManager.updateRCCList(_rcc);
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -76,8 +280,35 @@ namespace GreenPrintClient
             txtMessages.Text = "";
         }
 
-        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        private void HyperLink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
+            try
+            {
+                System.Diagnostics.Process.Start(e.Uri.ToString());
+            }
+            catch(Exception Ex)
+            {
+                System.Windows.MessageBox.Show($"GreenPrint client was not able to navigate to {e?.Uri?.ToString()} due to internal error.\r\n{Ex.Message}",
+                    "Navigate",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Stop);
+            }
+        }
+
+        private async void btnSubmit_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset the messages windows
+            txtMessages.Text = "";
+            // Show the loading spinnger
+            pbLoading.Visibility = Visibility.Visible;
+            // Execute pre-conditions validations
+            bool validationResult = await validateClientIDAsync();
+            if (validationResult == false)
+            {
+                pbLoading.Visibility = Visibility.Hidden;
+                return;
+            }
+
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
@@ -91,40 +322,25 @@ namespace GreenPrintClient
             // Clear any message in messages text box
             txtMessages.Text = "";
 
-            WebRequest request = WebRequest.Create(serviceURL);
+            WebRequest request = WebRequest.Create($"{GPServicesBase}{PRServiceURL}");
             // Set the Method property of the request to POST.  
             request.Method = "POST";
             // Create POST data and convert it to a byte array.  
 
             // Try get the document name if it was provided, otherwise, generate one
-            if (string.IsNullOrEmpty(txtDocumentName.Text))
-            {
-                var len = appbar_ClientID.Text.IndexOf("@") > 0 ? appbar_ClientID.Text.IndexOf("@") : appbar_ClientID.Text.Length - 1;
-                var dateSignature = DateTime.UtcNow.ToUnixTime();
-
-                var clientIDwithoutAtSign = appbar_ClientID.Text.Substring(0, len);
-                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
-            }
+            documentName = buildDocumentName();
 
             // Build DSO request
-            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
-            req.ClientID = appbar_ClientID.Text;
-            req.DocumentName = documentName;
-            req.DocumentBytes = null;
-            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
-            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
-            req.CarbonCopy_EMailAddressesList = CCList_emails;
-            req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
-
+            DocumentSigningOperationRequest req = buildDSORequest(documentName, CCList_emails, CCList_phones, recipientSMSNumber);
+            // Get the printed document as byte array
             byte[] data = null;
-
             data = GetLatestPrint();
-
             if (req == null)
                 return;
-
+            // Add the printed document bytes to the request object
             req.DocumentBytes = data;
 
+            // Serialize the request object
             MemoryStream memStream = new MemoryStream();
 
             BinaryFormatter bf = new BinaryFormatter();
@@ -134,85 +350,86 @@ namespace GreenPrintClient
                 data = ms.ToArray();
             }
 
-            var re = JsonConvert.SerializeObject(req);
+            var serializedRequest = JsonConvert.SerializeObject(req);
 
-            prSubmitting.IsActive = true;
-            var resultStatus = submitViaWebRequest(request, re);
-            prSubmitting.IsActive = false;
+            var resultStatus = submitViaWebRequest(request, serializedRequest);
             txtMessages.Text = resultStatus;
-        }
 
-        public MainWindow()
+            pbLoading.Visibility = Visibility.Hidden;
+        }
+        
+        private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
         {
-            InitializeComponent();
+            changeClientID = new ChangeClientID(clientID);
+            changeClientID.Closed += ChangeClientID_Closed;
+
+            changeClientID.ShowDialog();
         }
 
-        private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
+        private void ChangeClientID_Closed(object sender, EventArgs e)
         {
-            Init();
+            if (changeClientID.DialogResult == true)
+            {
+                clientID = changeClientID.NewClientID;
+                SettingManager.UpdateClientID(clientID);
+                txtClientID.Text = clientID;
+            }
         }
 
-        private void Init()
+        private void txtAddCC_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            settings = SettingManager.LoadSettings();
-            countryCodeList = Countries.GetData();
-            countryCodeList = Countries.GetDetailedDataDic();
-
-            settings.TryGetValue("InboxFolder", out inboxFolder);
-            if (string.IsNullOrEmpty(inboxFolder))
-            {
-                System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Windows.Application.Current.Shutdown();
-                return;
-            }
-
-            settings.TryGetValue("SubmittedFolder", out submittedFolder);
-            if (string.IsNullOrEmpty(inboxFolder))
-            {
-                System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Windows.Application.Current.Shutdown();
-                return;
-            }
-
-            settings.TryGetValue("FailedFolder", out failedFolder);
-            if (string.IsNullOrEmpty(inboxFolder))
-            {
-                System.Windows.Forms.MessageBox.Show("Unable to process printing job, could not get inbox folder name.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Windows.Application.Current.Shutdown();
-                return;
-            }
-
-            settings.TryGetValue("DSORServiceURL", out serviceURL);
-            if (string.IsNullOrEmpty(inboxFolder))
-            {
-                System.Windows.Forms.MessageBox.Show("GreenPrint service URL could not be loaded.", "GreenPrint | Settings", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Windows.Application.Current.Shutdown();
-                return;
-            }
-
-            //cmbCountriesPhonePrefix.Enabled = cbRecipientSMS.Checked;
-
-            if (countryCodeList != null)
-            {
-                cmbCountryPhonePrefix.ItemsSource = countryCodeList;
-                cmbCountryPhonePrefix.DisplayMemberPath = "Key";
-                cmbCountryPhonePrefix.SelectedValuePath = "Value";
-
-                cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111];
-            }
-
-            rbDeviceSign.IsChecked = true;
-
-            string clientID = string.Empty;
-            settings.TryGetValue("ClientID", out clientID);
-            if (clientID != string.Empty)
-            {
-                appbar_ClientID.Text = clientID;
-            }
-
 
         }
 
+        private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+                {
+                    System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    "Add CC Address",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
+                {
+                    lstCCList.Items.Add(txtAddCC.Text);
+                    txtAddCC.Text = "";
+                }
+            }
+        }
+
+        // Private helper methods
+        private string buildDocumentName()
+        {
+            string documentName = txtDocumentName.Text;
+
+            if (string.IsNullOrEmpty(txtDocumentName.Text))
+            {
+                var len = clientID.IndexOf("@") > 0 ? clientID.IndexOf("@") : clientID.Length - 1;
+                var dateSignature = DateTime.UtcNow.ToUnixTime();
+
+                var clientIDwithoutAtSign = clientID.Substring(0, len);
+                documentName = $"{clientIDwithoutAtSign}-{dateSignature.ToString()}";
+            }
+
+            return documentName;
+        }
+        private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
+        {
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
+            req.ClientID = clientID;
+            req.DocumentName = documentName;
+            req.DocumentBytes = null;
+            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
+            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
+            req.CarbonCopy_EMailAddressesList = CCList_emails;
+            req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
+            return req;
+        }
         private string extractEmailCCList()
         {
             List<string> emails = new List<string>();
@@ -239,31 +456,6 @@ namespace GreenPrintClient
 
             return list;
         }
-
-        private void txtAddCC_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-           
-        }
-
-        private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-                {
-                    this.ShowMessageAsync("Add Recipient", $"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                        MessageDialogStyle.Affirmative);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
-                {
-                    lstCCList.Items.Add(txtAddCC.Text);
-                    txtAddCC.Text = "";
-                }
-            }
-        }
-
         private string extractPhoneNumbersCCList()
         {
             List<string> phoneNumbers = new List<string>();
@@ -313,7 +505,11 @@ namespace GreenPrintClient
 
             if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
             {
-                System.Windows.Forms.MessageBox.Show("Could not detect latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.MessageBox.Show($"GreenPrint client software was not able to retreive the latest print job, please try again",
+                    "Retrieve Printed Document",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
                 return null;
             }
 
@@ -324,13 +520,15 @@ namespace GreenPrintClient
                     latestPrintedDocument = File.ReadAllBytes(recentPrintJob.FullName);
                 }
             }
-            catch (Exception Ex)
+            catch
             {
                 // log
-                System.Windows.Forms.MessageBox.Show("Could not read latest print job.", "Submit", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Console.WriteLine(Ex.Message);
-                latestPrintedDocument = null;
+                System.Windows.MessageBox.Show($"GreenPrint client software was not able to retreive the latest print job, please try again",
+                    "Retrieve Printed Document",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
 
+                latestPrintedDocument = null;
             }
             finally
             {
