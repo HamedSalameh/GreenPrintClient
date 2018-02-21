@@ -1,7 +1,7 @@
 ﻿<Window x:Class="GreenPrintClient.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="GreenPrint" Height="550" Width="525" Loaded="MetroWindow_Loaded"
+        Title="GreenPrint" Height="550" Width="540" Loaded="MetroWindow_Loaded"
         
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -18,7 +18,7 @@
     
     <Grid HorizontalAlignment="Left" Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="210" />
             <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
@@ -106,12 +106,42 @@
                     
         </WrapPanel>
         
-
-        <Label          Margin="5" Name="lblDocumentName"       Grid.Column="0" Grid.Row="1" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
         <TextBox        Margin="5" Name="txtDocumentName"       Grid.Column="1" Grid.Row="1" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
-        <RadioButton    VerticalAlignment="Center" Margin="5" Name="rbDeviceSign"          Grid.Column="0" Grid.Row="2">Sign via connected device</RadioButton>
+        <WrapPanel Grid.Column="0" Grid.Row="1">
+            <Label          Margin="5" Name="lblDocumentName"       Grid.Column="0" Grid.Row="1" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
+            <materialDesign:PackIcon Kind="HelpCircle" 
+                                 Margin="5,5,5,5"
+                                 VerticalAlignment="Center"
+                                 Foreground="Green"
+                                 ToolTip="Optional: The name of the document file that will be save and sent to device or user for signing" />
+        </WrapPanel>
+
+        <WrapPanel      Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">
+            <RadioButton    GroupName="PrintDest"
+                            VerticalAlignment="Center" 
+                            Margin="5" 
+                            Name="rbDeviceSign"          
+                            Grid.Column="0" Grid.Row="2">Sign via connected device</RadioButton>
+            <materialDesign:PackIcon Kind="HelpCircle" 
+                                 Margin="5,5,5,5"
+                                 VerticalAlignment="Center"
+                                 Foreground="Green"
+                                 ToolTip="Select this option if you want to print to a directed connected device, such as a tablet" />
+        </WrapPanel>
         <ComboBox       VerticalAlignment="Center" Margin="5" Name="cbConnectedDevices"    Grid.Column="1" Grid.Row="2" IsEnabled="False"></ComboBox>
-        <RadioButton    Margin="5" Name="rbRemoteSign"          Grid.Column="0" Grid.Row="3">Sign via remote device</RadioButton>
+
+        <WrapPanel      Grid.Column="0" Grid.Row="3" VerticalAlignment="Center">
+            <RadioButton    GroupName="PrintDest"
+                            VerticalAlignment="Center"
+                            Margin="5" 
+                            Name="rbRemoteSign"          
+                            Grid.Column="0" Grid.Row="3">Sign via remote device</RadioButton>
+            <materialDesign:PackIcon Kind="HelpCircle" 
+                                 Margin="5,5,5,5"
+                                 VerticalAlignment="Center"
+                                 Foreground="Green"
+                                 ToolTip="Select this option if you want to print to a remote device, such as user phone or home computer" />
+        </WrapPanel>
 
         <CheckBox       Margin="25,5,5,5" Name="cbSignViaSMS"       
                         IsEnabled="{Binding ElementName=rbRemoteSign, Path=IsChecked}"
@@ -160,9 +190,19 @@
                         Name="lblCCListTitle"     
                         Grid.Column="0" 
                         Grid.Row="6" 
-                        Grid.ColumnSpan="2" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">
+                        Grid.ColumnSpan="2" 
+                        FontFamily="Segoe UI, Lucida Sans Unicode, Verdana"
+                        FontSize="14">
             Send copy of signed document to ...
         </Label>
+        <materialDesign:PackIcon Kind="HelpCircle" 
+                                 Grid.Column="1" Grid.Row="6" 
+                                 Margin="25,5,5,5"
+                                 VerticalAlignment="Center"
+                                 Foreground="Green"
+                                 ToolTip="Add SMS number or EMail address in which a copy of the signed document will be sent to">
+            
+        </materialDesign:PackIcon>
 
         <WrapPanel Panel.ZIndex="1" Grid.Column="0" Grid.Row="7" Grid.ColumnSpan="2">
             <TextBox    Margin="5"      
