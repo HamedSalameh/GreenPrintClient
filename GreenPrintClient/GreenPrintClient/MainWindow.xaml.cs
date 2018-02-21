@@ -41,6 +41,9 @@ namespace GreenPrintClient
         SnackbarMessageQueue sbUIFatalMessageQueue;
         ChangeClientID changeClientID;
 
+        public Boolean IsAddCC_AddingSMS { get; set; }
+        public bool IsAddCC_AddingEmail { get; set; }
+
         private async Task<bool> validateClientIDAsync()
         {
             HttpClient client = new HttpClient();
@@ -114,6 +117,10 @@ namespace GreenPrintClient
             // Temporary Fatal errors message queues
             //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
 
+            controlAddPhoneNumber.PhoneNumberConfirmed += ControlAddPhoneNumber_PhoneNumberConfirmed;
+
+            IsAddCC_AddingSMS = true;
+
             validateCriticalSettings();
             populateCCList();
 
@@ -137,7 +144,33 @@ namespace GreenPrintClient
                 //appbar_ClientID.Text = clientID;
             }
 
+        }
 
+        private void ControlAddPhoneNumber_PhoneNumberConfirmed(object sender, RoutedEventArgs e)
+        {
+            string number = ((PhoneNumberRoutedEventArgs)e)?.PhoneNumberValue;
+
+            if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+            {
+                System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    "Add CC Address",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            //Update registry
+            var _rcc = SettingManager.LoadRCCList();
+            if (_rcc == null)
+                _rcc = new List<string>();
+
+            if (_rcc.IndexOf(number) == -1 || _rcc.Contains(number) == false)
+            {
+                _rcc.Add(number);
+                lstCCList.Items.Add(number);
+            }
+
+            SettingManager.updateRCCList(_rcc);
         }
 
         private void populateCCList()
@@ -384,14 +417,15 @@ namespace GreenPrintClient
 
         private void btnAddCC_SMSNumber_Click(object sender, RoutedEventArgs e)
         {
-            controlAddPhoneNumber.IsEnabled = true;
-            controlAddPhoneNumber.SetItemSource(countryCodeList, 111);
-            controlAddPhoneNumber.Visibility = Visibility.Visible;
+            btnAddCC_SMSNumber.IsEnabled = false;
+            btnAddCC_EmailAddress.IsEnabled = true;
+            controlAddPhoneNumber.SetItemSource(countryCodeList, 111, false);
         }
 
-        private void btnAddCC_SMSNumber_Click_1(object sender, RoutedEventArgs e)
+        private void btnAddCC_EmailAddress_Click(object sender, RoutedEventArgs e)
         {
-
+            btnAddCC_SMSNumber.IsEnabled = true;
+            btnAddCC_EmailAddress.IsEnabled = false;
         }
 
         //private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
