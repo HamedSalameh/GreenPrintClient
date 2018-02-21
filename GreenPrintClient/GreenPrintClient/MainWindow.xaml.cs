@@ -389,6 +389,11 @@ namespace GreenPrintClient
             controlAddPhoneNumber.Visibility = Visibility.Visible;
         }
 
+        private void btnAddCC_SMSNumber_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         //private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         //{
         //    if (e.Key == Key.Enter)

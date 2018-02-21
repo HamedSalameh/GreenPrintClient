@@ -87,6 +87,7 @@
     <Compile Include="CustomControls\ccAddPhoneNumber.xaml.cs">
       <DependentUpon>ccAddPhoneNumber.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CustomConverters\InverseBooleanConverter.cs" />
     <Compile Include="DocumentSigningOperationRequest.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
