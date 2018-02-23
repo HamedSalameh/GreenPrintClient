@@ -68,6 +68,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="CustomControls\ccAddEmailAddress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CustomControls\ccAddPhoneNumber.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -84,6 +88,9 @@
       <DependentUpon>ChangeClientID.xaml</DependentUpon>
     </Compile>
     <Compile Include="Consts.cs" />
+    <Compile Include="CustomControls\ccAddEmailAddress.xaml.cs">
+      <DependentUpon>ccAddEmailAddress.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CustomControls\ccAddPhoneNumber.xaml.cs">
       <DependentUpon>ccAddPhoneNumber.xaml</DependentUpon>
     </Compile>

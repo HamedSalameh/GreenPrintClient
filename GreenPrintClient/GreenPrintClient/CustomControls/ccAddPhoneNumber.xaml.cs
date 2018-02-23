@@ -87,6 +87,10 @@ namespace GreenPrintClient.CustomControls
             else
             {
                 btnConfirm.IsEnabled = true;
+                if (e.Key == System.Windows.Input.Key.Enter)
+                {
+                    btnConfirm_Click(this, e);
+                }
             }
         }
     }

@@ -118,6 +118,7 @@ namespace GreenPrintClient
             //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
 
             controlAddPhoneNumber.PhoneNumberConfirmed += ControlAddPhoneNumber_PhoneNumberConfirmed;
+            controlAddEmailAddress.EmailAddressConfirmed += ControlAddEmailAddress_EmailAddressConfirmed;
 
             IsAddCC_AddingSMS = true;
 
@@ -146,10 +147,8 @@ namespace GreenPrintClient
 
         }
 
-        private void ControlAddPhoneNumber_PhoneNumberConfirmed(object sender, RoutedEventArgs e)
+        private void updateCCList(string newCCItem)
         {
-            string number = ((PhoneNumberRoutedEventArgs)e)?.PhoneNumberValue;
-
             if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
             {
                 System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
@@ -164,13 +163,27 @@ namespace GreenPrintClient
             if (_rcc == null)
                 _rcc = new List<string>();
 
-            if (_rcc.IndexOf(number) == -1 || _rcc.Contains(number) == false)
+            if (_rcc.IndexOf(newCCItem) == -1 || _rcc.Contains(newCCItem) == false)
             {
-                _rcc.Add(number);
-                lstCCList.Items.Add(number);
+                _rcc.Add(newCCItem);
+                lstCCList.Items.Add(newCCItem);
             }
 
             SettingManager.updateRCCList(_rcc);
+        }
+
+        private void ControlAddEmailAddress_EmailAddressConfirmed(object sender, RoutedEventArgs e)
+        {
+            string mailAddress = ((EmailAddressRoutedEventArgs)e)?.EmailAddressValue;
+
+            updateCCList(mailAddress);
+        }
+
+        private void ControlAddPhoneNumber_PhoneNumberConfirmed(object sender, RoutedEventArgs e)
+        {
+            string number = ((PhoneNumberRoutedEventArgs)e)?.PhoneNumberValue;
+
+            updateCCList(number);
         }
 
         private void populateCCList()
@@ -427,6 +440,7 @@ namespace GreenPrintClient
             btnAddCC_SMSNumber.IsEnabled = true;
             btnAddCC_EmailAddress.IsEnabled = false;
         }
+
 
         //private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         //{
