@@ -35,7 +35,11 @@ namespace GreenPrintClient
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
+            // Validate credentials with server
+            bool isValid = false;
+            
+            if (isValid)
+                DialogResult = true;
         }
 
         private void txtNewClientID_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)

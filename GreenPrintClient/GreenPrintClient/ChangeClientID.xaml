@@ -6,30 +6,39 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:GreenPrintClient"
         mc:Ignorable="d"
-        Title="Change username" Height="160" Width="300" Loaded="Window_Loaded" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="Change username" Height="200" Width="300" Loaded="Window_Loaded" ShowInTaskbar="False" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="90"/>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Height="40">
-            
-        </Label>
-        <Label 
-            Margin="5"
-            Name="lblClientID"       Grid.Column="0" Grid.Row="1">Username</Label>
-        <TextBox 
-            Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1"
-            Margin="5"
-            Name="txtNewClientID" KeyDown="txtNewClientID_KeyDown" KeyUp="txtNewClientID_KeyUp" />
+        <materialDesign:PackIcon Foreground="Green" Kind="Information" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Margin="10,0,0,0"></materialDesign:PackIcon>
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Center" Margin="35,5,5,5" TextWrapping="Wrap">
+            Enter the login credentials of the account you wish to switch to.
+        </TextBlock>
+        
+        <WrapPanel Margin="5" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" VerticalAlignment="Center">
+            <materialDesign:PackIcon Foreground="Green" Kind="Account" Margin="5"></materialDesign:PackIcon>
+            <Label Name="lblClientID" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">
+                    Username</Label>
+        </WrapPanel>
+        <TextBox Margin="5" Grid.Column="1" Grid.Row="1" Name="txtNewClientID" KeyDown="txtNewClientID_KeyDown" KeyUp="txtNewClientID_KeyUp" Width="Auto" />
 
-        <WrapPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right">
+        <WrapPanel Margin="5" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Width="Auto">
+            <materialDesign:PackIcon Foreground="Green" Kind="Lock" Margin="5"></materialDesign:PackIcon>
+            <Label Name="lblClientPassword" Grid.Column="0" Grid.Row="1">
+                Password</Label>
+        </WrapPanel>
+        <PasswordBox Margin="5" Grid.Column="1" Grid.Row="2" Name="txtNewClientPassword"  Width="200"/>
+
+        <WrapPanel Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right">
             <Button 
                 Name="Cancel"
                 Width="70" Height="30" Margin="5" Click="Button_Click" IsCancel="True">
@@ -43,6 +52,6 @@
             </Button>
 
         </WrapPanel>
-        
+
     </Grid>
 </Window>
