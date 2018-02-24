@@ -88,6 +88,7 @@
       <DependentUpon>ChangeClientID.xaml</DependentUpon>
     </Compile>
     <Compile Include="Consts.cs" />
+    <Compile Include="Contracts\UserValidationContract.cs" />
     <Compile Include="CustomControls\ccAddEmailAddress.xaml.cs">
       <DependentUpon>ccAddEmailAddress.xaml</DependentUpon>
     </Compile>
