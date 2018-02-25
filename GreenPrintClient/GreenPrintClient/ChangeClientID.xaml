@@ -50,13 +50,20 @@
 
             <Button 
                 Name="Save"
-                Width="70" Height="30" Margin="5" Click="Save_Click">
+                Width="70" Height="30" Margin="5" Click="Save_ClickAsync">
                 <materialDesign:PackIcon Kind="Check" />
             </Button>
 
         </WrapPanel>
 
-        <TextBlock Name="txtServerResponse" Margin="5,10,5,5" Padding="5" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" Width="Auto" Height="60"></TextBlock>
+        <materialDesign:PackIcon 
+            Grid.Column="0" Grid.Row="4" VerticalAlignment="Top"
+            Width="20" Height="20"
+            Margin="10"
+            Foreground="OrangeRed" Kind="AlertCircle"></materialDesign:PackIcon>
+        <TextBlock 
+            Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="4" VerticalAlignment="Top"
+            Name="txtServerResponse" Margin="30,5,5,5" Padding="5"  Width="Auto" Height="60"></TextBlock>
 
     </Grid>
 </Window>

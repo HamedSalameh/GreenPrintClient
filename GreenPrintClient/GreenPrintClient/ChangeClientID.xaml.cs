@@ -1,10 +1,15 @@
 ﻿using GreenPrintClient.Contracts;
+using GreenPrintClient.Helpers.Contracts;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace GreenPrintClient
@@ -39,7 +44,7 @@ namespace GreenPrintClient
             DialogResult = false;
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
+        private async void Save_ClickAsync(object sender, RoutedEventArgs e)
         {
             // Validate credentials with server
             bool isValid = false;
@@ -47,80 +52,79 @@ namespace GreenPrintClient
             userValidationContract.UserName = txtNewClientID.Text;
             userValidationContract.password = txtNewClientPassword.Password;
 
-            isValid = valideUserCredentialsWithServer(userValidationContract);
-            
+            isValid  =  await valideUserCredentialsWithServer(userValidationContract);
+            wChangeClient.Focus();
+
             if (isValid)
             {
                 DialogResult = true;
             }
-            else
-            {
-                
-                txtServerResponse.Text = "Change user name(client ID) failed.\r\nThe supplied username or password were not valid.";
-                wChangeClient.Height = 280;
-            }
-                
         }
 
-        private bool valideUserCredentialsWithServer(UserValidation userValidationContract)
+        private async Task<bool> valideUserCredentialsWithServer(UserValidation userValidationContract)
         {
             string req = JsonConvert.SerializeObject(userValidationContract);
 
-            WebRequest request = WebRequest.Create($"http://localhost:49639/account/TestUserCredentials");
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri("http://localhost:49639/Account/TestUserCredentials");
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            string status = string.Empty;
-            WebResponse response = null;
-            bool validationResult = false;
+            string path = $"http://localhost:49639/Account/TestUserCredentials";
+            HttpResponseMessage response = await client.PostAsync(path,
+                new StringContent(req, Encoding.UTF8, "application/json"));
+
+            // Pre conditions met
+            var res = response.Content?.ReadAsStringAsync()?.Result;
+            ClientValidationResponse clientValidationResponse = null;
+
+            if (string.IsNullOrEmpty(res))
+            {
+                txtServerResponse.Inlines.Add("Could not parse server response, please try again");
+                return false;
+            }
 
             try
             {
-                // Set the Method property of the request to POST.  
-                request.Method = "POST";
+                txtServerResponse.Inlines.Clear();
+                clientValidationResponse = JsonConvert.DeserializeObject<ClientValidationResponse>(res.Remove(0, 1).Replace("\\", "").Remove(res.Remove(0, 1).Replace("\\", "").Length - 1));
 
-                byte[] byteArray = Encoding.UTF8.GetBytes(req);
-                // Set the ContentType property of the WebRequest.  
-                request.ContentType = "application/json";
-                // Set the ContentLength property of the WebRequest.  
-                request.ContentLength = byteArray.Length;
-                // Get the request stream.  
-                Stream dataStream = request.GetRequestStream();
-                // Write the data to the request stream.  
-                dataStream.Write(byteArray, 0, byteArray.Length);
-                // Close the Stream object.  
-                dataStream.Close();
-                // Get the response.  
-                response = request.GetResponse();
-                // Get the status.  
-                status = ((HttpWebResponse)response).StatusDescription;
+                if (clientValidationResponse.HttpStatusCode == (int)HttpStatusCode.OK)
+                    return true;
 
-                if (((HttpWebResponse)response).StatusCode != HttpStatusCode.OK)
+                txtServerResponse.TextWrapping = TextWrapping.Wrap;
+                txtServerResponse.Inlines.Add(clientValidationResponse.Message);
+                txtServerResponse.Inlines.Add(": ");
+                Hyperlink hyperLink = new Hyperlink()
                 {
-                    return false;
-                }
+                    NavigateUri = new Uri(clientValidationResponse.HyperLink)
+                };
+                hyperLink.Inlines.Add(clientValidationResponse.HyperLinkName);
+                hyperLink.RequestNavigate += HyperLink_RequestNavigate;
 
-                String responseString = string.Empty;
-                using (Stream stream = response.GetResponseStream())
-                {
-                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
-                     responseString = reader.ReadToEnd();
-                }
+                txtServerResponse.Inlines.Add(hyperLink);
 
-                Boolean.TryParse(responseString, out validationResult);
-
-                return validationResult;
+                wChangeClient.Height = 300;
+                wChangeClient.Focus();
+                
             }
-            catch (Exception Ex)
+            catch
             {
-                status = "An error happened while trying to send the request.\r\n" + Ex.Message;
-            }
-            finally
-            {
+                txtServerResponse.Inlines.Clear();
+                clientValidationResponse = new ClientValidationResponse();
+                clientValidationResponse.Message = res.Replace("\"", "").Replace("\\", "");
 
-                if (response != null)
-                    response.Close();
-            }
+                txtServerResponse.Inlines.Add(clientValidationResponse.Message);
 
+                wChangeClient.Height = 300;
+                wChangeClient.Focus();
+            }
             return false;
+        }
+
+        private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void txtNewClientID_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
