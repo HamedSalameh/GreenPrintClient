@@ -4,7 +4,7 @@ using System;
 namespace GreenPrintClient.Contracts
 {
     [Serializable]
-    public class UserValidationContract
+    public class UserValidation
     {
         [JsonProperty("username")]
         public string UserName { get; set; }

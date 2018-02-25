@@ -43,7 +43,7 @@ namespace GreenPrintClient
         {
             // Validate credentials with server
             bool isValid = false;
-            UserValidationContract userValidationContract = new UserValidationContract();
+            UserValidation userValidationContract = new UserValidation();
             userValidationContract.UserName = txtNewClientID.Text;
             userValidationContract.password = txtNewClientPassword.Password;
 
@@ -62,7 +62,7 @@ namespace GreenPrintClient
                 
         }
 
-        private bool valideUserCredentialsWithServer(UserValidationContract userValidationContract)
+        private bool valideUserCredentialsWithServer(UserValidation userValidationContract)
         {
             string req = JsonConvert.SerializeObject(userValidationContract);
 
