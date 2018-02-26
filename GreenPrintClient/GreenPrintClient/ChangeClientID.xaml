@@ -51,7 +51,25 @@
             <Button 
                 Name="Save"
                 Width="70" Height="30" Margin="5" Click="Save_ClickAsync">
-                <materialDesign:PackIcon Kind="Check" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <materialDesign:PackIcon Grid.Column="0" Grid.Row="0" Name="btnConfirm_Idle" Kind="Check" />
+                    <materialDesign:Card Grid.Column="0" Grid.Row="0" Name="btnConfirm_Waiting" Visibility="Hidden"
+                Margin="0"
+                Width="20"
+                UniformCornerRadius="14"
+                Padding="0">
+                        <ProgressBar 
+                          Style="{StaticResource MaterialDesignCircularProgressBar}"
+                            Value="40"
+                            IsIndeterminate="True" />
+                    </materialDesign:Card>
+                </Grid>
             </Button>
 
         </WrapPanel>

@@ -52,17 +52,16 @@ namespace GreenPrintClient
             userValidationContract.UserName = txtNewClientID.Text;
             userValidationContract.password = txtNewClientPassword.Password;
 
-            isValid  =  await valideUserCredentialsWithServer(userValidationContract);
+            await valideUserCredentialsWithServer(userValidationContract);
             wChangeClient.Focus();
-
-            if (isValid)
-            {
-                DialogResult = true;
-            }
+            
         }
 
-        private async Task<bool> valideUserCredentialsWithServer(UserValidation userValidationContract)
+        private async Task valideUserCredentialsWithServer(UserValidation userValidationContract)
         {
+            btnConfirm_Idle.Visibility = Visibility.Hidden;
+            btnConfirm_Waiting.Visibility = Visibility.Visible;
+
             string req = JsonConvert.SerializeObject(userValidationContract);
 
             HttpClient client = new HttpClient();
@@ -81,7 +80,6 @@ namespace GreenPrintClient
             if (string.IsNullOrEmpty(res))
             {
                 txtServerResponse.Inlines.Add("Could not parse server response, please try again");
-                return false;
             }
 
             try
@@ -90,7 +88,12 @@ namespace GreenPrintClient
                 clientValidationResponse = JsonConvert.DeserializeObject<ClientValidationResponse>(res.Remove(0, 1).Replace("\\", "").Remove(res.Remove(0, 1).Replace("\\", "").Length - 1));
 
                 if (clientValidationResponse.HttpStatusCode == (int)HttpStatusCode.OK)
-                    return true;
+                {
+                    btnConfirm_Idle.Visibility = Visibility.Visible;
+                    btnConfirm_Waiting.Visibility = Visibility.Hidden;
+
+                    DialogResult = true;
+                }
 
                 txtServerResponse.TextWrapping = TextWrapping.Wrap;
                 txtServerResponse.Inlines.Add(clientValidationResponse.Message);
@@ -119,7 +122,9 @@ namespace GreenPrintClient
                 wChangeClient.Height = 300;
                 wChangeClient.Focus();
             }
-            return false;
+
+            btnConfirm_Idle.Visibility = Visibility.Visible;
+            btnConfirm_Waiting.Visibility = Visibility.Hidden;
         }
 
         private void HyperLink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
