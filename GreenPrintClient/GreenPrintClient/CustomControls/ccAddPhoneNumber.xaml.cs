@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -30,6 +32,13 @@ namespace GreenPrintClient.CustomControls
 
     public partial class ccAddPhoneNumber : UserControl
     {
+        public class cont
+        {
+            public ObservableCollection<string> names { get; set; }
+        }
+
+        public cont c = new cont();
+
         public static readonly RoutedEvent PhoneNumberConfirmedEvent =
          EventManager.RegisterRoutedEvent("PhoneNumberConfirmedEvent",
                       RoutingStrategy.Bubble, typeof(RoutedEventHandler),
@@ -52,6 +61,24 @@ namespace GreenPrintClient.CustomControls
         public ccAddPhoneNumber()
         {
             InitializeComponent();
+
+            c = new cont();
+            c.names = new ObservableCollection<string>();
+
+            c.names.Add("aaa");
+            c.names.Add("aab");
+            c.names.Add("aac");
+            c.names.Add("aba");
+            c.names.Add("abb");
+            c.names.Add("abc");
+            c.names.Add("aca");
+            c.names.Add("acb");
+            c.names.Add("acc");
+            c.names.Add("acc1");
+            c.names.Add("acc2");
+
+
+            cmbAutoComplete.ItemsSource = c.names;
         }
 
         public void SetItemSource(Dictionary<string, string> source, int defaultIndex, bool overwrite = false)
@@ -80,6 +107,11 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            cmbAutoComplete.Visibility = Visibility.Visible;
+            cmbAutoComplete.ItemsSource = c.names.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
+            cmbAutoComplete.IsDropDownOpen = true;
+            txtSMSNumber.Focus();
+
             if (txtSMSNumber.Text.Length < 9)
             {
                 btnConfirm.IsEnabled = false;
@@ -93,5 +125,18 @@ namespace GreenPrintClient.CustomControls
                 }
             }
         }
+
+        private void cmbAutoComplete_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+        }
+
+        private void cmbAutoComplete_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            cmbAutoComplete.Visibility = Visibility.Hidden;
+            if(cmbAutoComplete.SelectedValue != null)
+                txtSMSNumber.Text = cmbAutoComplete.SelectedValue.ToString();
+        }
     }
+
+
 }
