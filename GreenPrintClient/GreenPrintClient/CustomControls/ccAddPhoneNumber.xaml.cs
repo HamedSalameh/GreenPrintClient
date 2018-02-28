@@ -107,6 +107,9 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            // validate only digits allowed
+            
+
             var dynamicItemsSouce = c.names.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
 
             cmbAutoComplete.ItemsSource = dynamicItemsSouce;
@@ -149,6 +152,16 @@ namespace GreenPrintClient.CustomControls
             cmbAutoComplete.Visibility = Visibility.Hidden;
             if(cmbAutoComplete.SelectedValue != null)
                 txtSMSNumber.Text = cmbAutoComplete.SelectedValue.ToString();
+        }
+
+        private void txtSMSNumber_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key < System.Windows.Input.Key.D0 || e.Key > System.Windows.Input.Key.D9)
+            {
+                System.Windows.MessageBox.Show("Please enter only digits (0-9) for a phone number", "Phone Number", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                e.Handled = true;
+                return;
+            }
         }
     }
 

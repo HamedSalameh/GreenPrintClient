@@ -31,7 +31,7 @@
                 <TextBox    Margin="3"        
                             Name="txtSMSNumber"               
                             Width="100" 
-                            HorizontalAlignment="Center" KeyUp="txtSMSNumber_KeyUp"
+                            HorizontalAlignment="Center" KeyUp="txtSMSNumber_KeyUp" KeyDown="txtSMSNumber_KeyDown"
                             />
                 <ComboBox
                     Margin="5"
