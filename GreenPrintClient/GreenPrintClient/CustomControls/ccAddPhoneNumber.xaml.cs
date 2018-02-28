@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -30,14 +31,39 @@ namespace GreenPrintClient.CustomControls
         }
     }
 
-    public partial class ccAddPhoneNumber : UserControl
+    public class pnDataContext
     {
-        public class cont
+        public pnDataContext()
         {
-            public ObservableCollection<string> names { get; set; }
+            cachedPhoneNumbers = new ObservableCollection<string>();
         }
 
-        public cont c = new cont();
+        public pnDataContext(List<string> PhoneNumbers)
+        {
+            if(PhoneNumbers == null)
+            {
+                throw new ArgumentException("Phone Numbers list must be null", nameof(PhoneNumbers));
+            }
+
+            if (PhoneNumbers != null && PhoneNumbers.Count > 0)
+            {
+                foreach(var item in PhoneNumbers)
+                {
+                    cachedPhoneNumbers.Add(item);
+                }
+            }
+        }
+
+        public ObservableCollection<string> cachedPhoneNumbers
+        {
+            get;
+            set;
+        }
+    }
+
+    public partial class ccAddPhoneNumber : UserControl
+    {
+        public pnDataContext dc = new pnDataContext();
 
         public static readonly RoutedEvent PhoneNumberConfirmedEvent =
          EventManager.RegisterRoutedEvent("PhoneNumberConfirmedEvent",
@@ -62,23 +88,23 @@ namespace GreenPrintClient.CustomControls
         {
             InitializeComponent();
 
-            c = new cont();
-            c.names = new ObservableCollection<string>();
+            dc = new pnDataContext();
+            dc.cachedPhoneNumbers = new ObservableCollection<string>();
 
-            c.names.Add("aaa");
-            c.names.Add("aab");
-            c.names.Add("aac");
-            c.names.Add("aba");
-            c.names.Add("abb");
-            c.names.Add("abc");
-            c.names.Add("aca");
-            c.names.Add("acb");
-            c.names.Add("acc");
-            c.names.Add("acc1");
-            c.names.Add("acc2");
+            dc.cachedPhoneNumbers.Add("aaa");
+            dc.cachedPhoneNumbers.Add("aab");
+            dc.cachedPhoneNumbers.Add("aac");
+            dc.cachedPhoneNumbers.Add("aba");
+            dc.cachedPhoneNumbers.Add("abb");
+            dc.cachedPhoneNumbers.Add("abc");
+            dc.cachedPhoneNumbers.Add("aca");
+            dc.cachedPhoneNumbers.Add("acb");
+            dc.cachedPhoneNumbers.Add("acc");
+            dc.cachedPhoneNumbers.Add("acc1");
+            dc.cachedPhoneNumbers.Add("acc2");
 
 
-            cmbAutoComplete.ItemsSource = c.names;
+            cmbAutoComplete.ItemsSource = dc.cachedPhoneNumbers;
         }
 
         public void SetItemSource(Dictionary<string, string> source, int defaultIndex, bool overwrite = false)
@@ -107,10 +133,7 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            // validate only digits allowed
-            
-
-            var dynamicItemsSouce = c.names.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
+            var dynamicItemsSouce = dc.cachedPhoneNumbers.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
 
             cmbAutoComplete.ItemsSource = dynamicItemsSouce;
 
@@ -150,7 +173,7 @@ namespace GreenPrintClient.CustomControls
         private void cmbAutoComplete_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             cmbAutoComplete.Visibility = Visibility.Hidden;
-            if(cmbAutoComplete.SelectedValue != null)
+            if (cmbAutoComplete.SelectedValue != null)
                 txtSMSNumber.Text = cmbAutoComplete.SelectedValue.ToString();
         }
 
