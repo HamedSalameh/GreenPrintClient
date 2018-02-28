@@ -107,9 +107,22 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            cmbAutoComplete.Visibility = Visibility.Visible;
-            cmbAutoComplete.ItemsSource = c.names.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
-            cmbAutoComplete.IsDropDownOpen = true;
+            var dynamicItemsSouce = c.names.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
+
+            cmbAutoComplete.ItemsSource = dynamicItemsSouce;
+
+            if (dynamicItemsSouce != null && dynamicItemsSouce.Count > 0)
+            {
+                cmbAutoComplete.Visibility = Visibility.Visible;
+                cmbAutoComplete.IsDropDownOpen = true;
+            }
+            else
+            {
+                cmbAutoComplete.Visibility = Visibility.Hidden;
+                cmbAutoComplete.IsDropDownOpen = true;
+            }
+
+
             txtSMSNumber.Focus();
 
             if (txtSMSNumber.Text.Length < 9)
@@ -119,10 +132,11 @@ namespace GreenPrintClient.CustomControls
             else
             {
                 btnConfirm.IsEnabled = true;
-                if (e.Key == System.Windows.Input.Key.Enter)
-                {
-                    btnConfirm_Click(this, e);
-                }
+            }
+
+            if (e.Key == System.Windows.Input.Key.Enter && btnConfirm.IsEnabled == true)
+            {
+                btnConfirm_Click(this, e);
             }
         }
 
