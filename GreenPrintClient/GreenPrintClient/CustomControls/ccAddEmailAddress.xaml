@@ -18,18 +18,28 @@
             <RowDefinition></RowDefinition>
         </Grid.RowDefinitions>
 
-        <WrapPanel Grid.Column="0" Grid.Row="0">
-            <TextBox        Margin="5"        
+        <WrapPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top">
+            <StackPanel Margin="5">
+                <TextBox    Margin="5"        
                             Name="txtEmailAddress"               
-                            Width="180" 
-                            HorizontalAlignment="Center" KeyUp="txtEmailAddress_KeyUp"
+                            Width="170" 
+                            VerticalAlignment="Bottom" KeyUp="txtEmailAddress_KeyUp"
                             />
+                <ComboBox
+                    Margin="5"
+                    Name="cmbAutoComplete"
+                    SelectionChanged="cmbAutoComplete_SelectionChanged"
+                    Visibility="Hidden"
+                    Width="90"
+                    />
+            </StackPanel>
 
             <Button     Margin="5" Padding="0" 
                         Width="30" Height="30"
                         Name="btnConfirm"
                         FontSize="20" FontWeight="Black"
                         IsEnabled="False"
+                        VerticalAlignment="Top"
                         Style="{DynamicResource MaterialDesignFloatingActionButton}" Click="btnConfirm_Click"
                         >
                 <materialDesign:PackIcon Kind="Check" />

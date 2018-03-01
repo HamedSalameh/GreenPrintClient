@@ -433,7 +433,7 @@ namespace GreenPrintClient
         {
             btnAddCC_SMSNumber.IsEnabled = false;
             btnAddCC_EmailAddress.IsEnabled = true;
-            controlAddPhoneNumber.SetItemSource(countryCodeList, 111, false);
+            controlAddPhoneNumber.SetCountryListItemSource(countryCodeList, 111, false);
         }
 
         private void btnAddCC_EmailAddress_Click(object sender, RoutedEventArgs e)

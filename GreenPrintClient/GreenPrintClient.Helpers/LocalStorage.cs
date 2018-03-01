@@ -68,6 +68,46 @@ namespace GreenPrintClient.Helpers
             return phoneList;
         }
 
+        public List<string> AddEmailAddress(string emailAddress)
+        {
+            if (emailList == null)
+                emailList = new List<string>();
+
+            if (string.IsNullOrEmpty(emailAddress))
+                throw new ArgumentException("Empty or invalid email address", nameof(emailAddress));
+
+            if (emailList.Contains(emailAddress) == false)
+            {
+                byte[] dataAsBytes = null;
+                try
+                {
+                    emailList.Add(emailAddress);
+
+                    string dat = JsonConvert.SerializeObject(emailList);
+
+                    dataAsBytes = System.Text.Encoding.UTF8.GetBytes(dat);
+                    if (dataAsBytes == null || dataAsBytes.Length < 1)
+                        return emailList;
+                }
+                catch (Exception Ex)
+                {
+                    Ex.Data.Add("UIMessage", "Could not save cached phone number list");
+                    throw;
+                }
+
+                try
+                {
+                    File.WriteAllBytes($"{appPath}\\{dataFileNames[(int)dataType.EmailAddresses]}", dataAsBytes);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+            }
+
+            return emailList;
+        }
+
         private List<string> LoadData(dataType dataType)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory;

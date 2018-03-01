@@ -109,12 +109,15 @@ namespace GreenPrintClient.CustomControls
 
             cachedPhoneNumbers = localStorage.LoadPhoneNumbers();
 
-            dc = new pnDataContext(cachedPhoneNumbers);
+            if (cachedPhoneNumbers != null)
+                dc = new pnDataContext(cachedPhoneNumbers);
+            else
+                dc = new pnDataContext();
 
             cmbAutoComplete.ItemsSource = dc.cachedPhoneNumbers;
         }
 
-        public void SetItemSource(Dictionary<string, string> source, int defaultIndex, bool overwrite = false)
+        public void SetCountryListItemSource(Dictionary<string, string> source, int defaultIndex, bool overwrite = false)
         {
             if (cmbCountryPhonePrefix.ItemsSource != null && overwrite == false)
                 return;
@@ -146,6 +149,26 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
+            refreshAutoComplete();
+
+            if (txtSMSNumber.Text.Length < 9)
+            {
+                btnConfirm.IsEnabled = false;
+            }
+            else
+            {
+                btnConfirm.IsEnabled = true;
+            }
+
+            if (e.Key == System.Windows.Input.Key.Enter && btnConfirm.IsEnabled == true)
+            {
+
+                btnConfirm_Click(this, e);
+            }
+        }
+
+        private void refreshAutoComplete()
+        {
             var dynamicItemsSouce = dc.cachedPhoneNumbers.Where(s => s.StartsWith(txtSMSNumber.Text, System.StringComparison.InvariantCultureIgnoreCase)).Take(8).ToList();
 
             cmbAutoComplete.ItemsSource = dynamicItemsSouce;
@@ -163,21 +186,6 @@ namespace GreenPrintClient.CustomControls
 
 
             txtSMSNumber.Focus();
-
-            if (txtSMSNumber.Text.Length < 9)
-            {
-                btnConfirm.IsEnabled = false;
-            }
-            else
-            {
-                btnConfirm.IsEnabled = true;
-            }
-
-            if (e.Key == System.Windows.Input.Key.Enter && btnConfirm.IsEnabled == true)
-            {
-                
-                btnConfirm_Click(this, e);
-            }
         }
 
         private void cmbAutoComplete_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
