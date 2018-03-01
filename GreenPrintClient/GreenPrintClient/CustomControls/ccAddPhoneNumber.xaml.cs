@@ -137,6 +137,9 @@ namespace GreenPrintClient.CustomControls
             var updatedList = localStorage.AddPhoneNumber(txtSMSNumber.Text);
             dc.UpdateList(updatedList);
 
+            cmbAutoComplete.Visibility = Visibility.Hidden;
+            cmbAutoComplete.IsDropDownOpen = false;
+
             RaisePhoneNumberConfirmedEvent("+" + cmbCountryPhonePrefix.SelectedValue + "-" + txtSMSNumber.Text);
             txtSMSNumber.Text = "";
         }
@@ -172,6 +175,7 @@ namespace GreenPrintClient.CustomControls
 
             if (e.Key == System.Windows.Input.Key.Enter && btnConfirm.IsEnabled == true)
             {
+                
                 btnConfirm_Click(this, e);
             }
         }
@@ -189,7 +193,7 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if (e.Key < System.Windows.Input.Key.D0 || e.Key > System.Windows.Input.Key.D9)
+            if ((e.Key < System.Windows.Input.Key.D0 || e.Key > System.Windows.Input.Key.D9) && e.Key != System.Windows.Input.Key.Enter && e.Key != System.Windows.Input.Key.Delete)
             {
                 System.Windows.MessageBox.Show("Please enter only digits (0-9) for a phone number", "Phone Number", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                 e.Handled = true;

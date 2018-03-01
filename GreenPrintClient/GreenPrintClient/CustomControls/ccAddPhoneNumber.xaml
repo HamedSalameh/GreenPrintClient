@@ -30,7 +30,7 @@
             <StackPanel Margin="5">
                 <TextBox    Margin="3"        
                             Name="txtSMSNumber"               
-                            Width="100" 
+                            Width="90" 
                             HorizontalAlignment="Center" KeyUp="txtSMSNumber_KeyUp" KeyDown="txtSMSNumber_KeyDown"
                             />
                 <ComboBox
@@ -39,6 +39,7 @@
                     PreviewTextInput="cmbAutoComplete_PreviewTextInput"
                     SelectionChanged="cmbAutoComplete_SelectionChanged"
                     Visibility="Hidden"
+                    Width="90"
                     >
 
                 </ComboBox>

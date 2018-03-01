@@ -12,6 +12,14 @@ namespace GreenPrintClient.Helpers
         List<String> emailList;
         string appPath;
 
+        string[] dataFileNames = { "pn.dat", "ea.dat" };
+        public enum dataType
+        {
+            PhoneNumbers,
+
+            EmailAddresses
+        }
+
         public LocalStorage()
         {
             phoneList = new List<string>();
@@ -49,7 +57,7 @@ namespace GreenPrintClient.Helpers
 
                 try
                 {
-                    File.WriteAllBytes($"{appPath}\\pn.dat", dataAsBytes);
+                    File.WriteAllBytes($"{appPath}\\{dataFileNames[(int)dataType.PhoneNumbers]}", dataAsBytes);
                 }
                 catch (Exception)
                 {
@@ -60,20 +68,31 @@ namespace GreenPrintClient.Helpers
             return phoneList;
         }
 
-        public List<string> LoadPhoneNumbers()
+        private List<string> LoadData(dataType dataType)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory;
+            string fileName = $"{path}\\{dataFileNames[(int)dataType]}";
 
             try
             {
-                if (File.Exists($"{path}\\pn.dat"))
+                if (File.Exists(fileName))
                 {
-                    byte[] dat = File.ReadAllBytes($"{path}\\pn.dat");
+                    byte[] dat = File.ReadAllBytes(fileName);
                     if (dat != null && dat.Length > 0)
                     {
-                        string phones = System.Text.Encoding.UTF8.GetString(dat);
+                        string list = System.Text.Encoding.UTF8.GetString(dat);
 
-                        phoneList = JsonConvert.DeserializeObject<List<String>>(phones);
+                        if (dataType == dataType.EmailAddresses)
+                        {
+                            emailList = JsonConvert.DeserializeObject<List<String>>(list);
+                            return emailList;
+                        }
+                        else
+                        {
+                            phoneList = JsonConvert.DeserializeObject<List<String>>(list);
+                            return phoneList;
+                        }
+                        
                     }
                 }
             }
@@ -82,12 +101,17 @@ namespace GreenPrintClient.Helpers
                 Console.WriteLine(Ex.Message);
             }
 
-            return phoneList;
+            return null;
+        }
+
+        public List<string> LoadPhoneNumbers()
+        {
+            return LoadData(dataType.PhoneNumbers);
         }
 
         public List<string> LocalEMailAddresses()
         {
-            return null;
+            return LoadData(dataType.EmailAddresses);
         }
     }
 }
