@@ -23,7 +23,7 @@
                 <TextBox    Margin="5"        
                             Name="txtEmailAddress"               
                             Width="170" 
-                            VerticalAlignment="Bottom" KeyUp="txtEmailAddress_KeyUp"
+                            VerticalAlignment="Bottom" KeyUp="txtEmailAddress_KeyUp" KeyDown="txtEmailAddress_KeyDown"
                             />
                 <ComboBox
                     Margin="5"

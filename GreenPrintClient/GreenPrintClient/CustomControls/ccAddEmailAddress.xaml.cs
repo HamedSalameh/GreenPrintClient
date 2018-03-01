@@ -172,5 +172,14 @@ namespace GreenPrintClient.CustomControls
             if (cmbAutoComplete.SelectedValue != null)
                 txtEmailAddress.Text = cmbAutoComplete.SelectedValue.ToString();
         }
+
+        private void txtEmailAddress_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Tab)
+            {
+                cmbAutoComplete.Visibility = Visibility.Hidden;
+                cmbAutoComplete.IsDropDownOpen = false;
+            }
+        }
     }
 }

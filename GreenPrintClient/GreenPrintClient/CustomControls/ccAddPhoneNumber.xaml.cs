@@ -41,7 +41,7 @@ namespace GreenPrintClient.CustomControls
 
         public pnDataContext(List<string> PhoneNumbers)
         {
-            if(PhoneNumbers == null)
+            if (PhoneNumbers == null)
             {
                 throw new ArgumentException("Phone Numbers list must be null", nameof(PhoneNumbers));
             }
@@ -50,7 +50,7 @@ namespace GreenPrintClient.CustomControls
 
             if (PhoneNumbers != null && PhoneNumbers.Count > 0)
             {
-                foreach(var item in PhoneNumbers)
+                foreach (var item in PhoneNumbers)
                 {
                     cachedPhoneNumbers.Add(item);
                 }
@@ -151,6 +151,11 @@ namespace GreenPrintClient.CustomControls
         {
             refreshAutoComplete();
 
+            if (txtSMSNumber.Text.Length == 0)
+            {
+                cmbAutoComplete.Visibility = Visibility.Hidden;
+            }
+
             if (txtSMSNumber.Text.Length < 9)
             {
                 btnConfirm.IsEnabled = false;
@@ -201,13 +206,26 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if ((e.Key < System.Windows.Input.Key.D0 || e.Key > System.Windows.Input.Key.D9) && e.Key != System.Windows.Input.Key.Enter && e.Key != System.Windows.Input.Key.Delete)
+            if ((e.Key < System.Windows.Input.Key.D0 || e.Key > System.Windows.Input.Key.D9) && e.Key != System.Windows.Input.Key.Enter
+                && e.Key != System.Windows.Input.Key.Delete
+                && e.Key != System.Windows.Input.Key.Tab
+                )
             {
                 System.Windows.MessageBox.Show("Please enter only digits (0-9) for a phone number", "Phone Number", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                 e.Handled = true;
                 txtSMSNumber.Focus();
                 return;
             }
+            else if (e.Key == System.Windows.Input.Key.Tab)
+            {
+                cmbAutoComplete.Visibility = Visibility.Hidden;
+                cmbAutoComplete.IsDropDownOpen = false;
+            }
+        }
+
+        private void txtSMSNumber_LostFocus(object sender, RoutedEventArgs e)
+        {
+                
         }
     }
 
