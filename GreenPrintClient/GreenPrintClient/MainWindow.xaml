@@ -239,13 +239,13 @@
         <local:ccAddEmailAddress
             Visibility="{Binding Path=IsEnabled, ElementName=btnAddCC_EmailAddress, Converter={StaticResource InverseBoolToVisibility}}"
             x:Name="controlAddEmailAddress"
-            Grid.Column="1" Grid.Row="7" Grid.ZIndex="2">           
+            Grid.Column="1" Grid.Row="7" Grid.ZIndex="2" Grid.RowSpan="2">           
         </local:ccAddEmailAddress>
         
-        <local:ccAddPhoneNumber 
+        <local:ccAddPhoneNumber             
             Visibility="{Binding Path=IsEnabled, ElementName=btnAddCC_SMSNumber, Converter={StaticResource InverseBoolToVisibility}}"
             x:Name="controlAddPhoneNumber"
-            Grid.Column="1" Grid.Row="7" Grid.ZIndex="2">
+            Grid.Column="1" Grid.Row="7" Grid.ZIndex="2" Grid.RowSpan="2">
         </local:ccAddPhoneNumber>
 
         <ListBox        Margin="5" Padding="5" 
