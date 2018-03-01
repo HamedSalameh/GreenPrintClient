@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GreenPrintClient.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -45,9 +46,24 @@ namespace GreenPrintClient.CustomControls
                 throw new ArgumentException("Phone Numbers list must be null", nameof(PhoneNumbers));
             }
 
+            cachedPhoneNumbers = new ObservableCollection<string>();
+
             if (PhoneNumbers != null && PhoneNumbers.Count > 0)
             {
                 foreach(var item in PhoneNumbers)
+                {
+                    cachedPhoneNumbers.Add(item);
+                }
+            }
+        }
+
+        public void UpdateList(List<string> list)
+        {
+            if (list != null && list.Count > 0)
+            {
+                cachedPhoneNumbers.Clear();
+
+                foreach (var item in list)
                 {
                     cachedPhoneNumbers.Add(item);
                 }
@@ -64,6 +80,8 @@ namespace GreenPrintClient.CustomControls
     public partial class ccAddPhoneNumber : UserControl
     {
         public pnDataContext dc = new pnDataContext();
+        List<string> cachedPhoneNumbers;
+        LocalStorage localStorage;
 
         public static readonly RoutedEvent PhoneNumberConfirmedEvent =
          EventManager.RegisterRoutedEvent("PhoneNumberConfirmedEvent",
@@ -87,22 +105,11 @@ namespace GreenPrintClient.CustomControls
         public ccAddPhoneNumber()
         {
             InitializeComponent();
+            localStorage = new LocalStorage();
 
-            dc = new pnDataContext();
-            dc.cachedPhoneNumbers = new ObservableCollection<string>();
+            cachedPhoneNumbers = localStorage.LoadPhoneNumbers();
 
-            dc.cachedPhoneNumbers.Add("aaa");
-            dc.cachedPhoneNumbers.Add("aab");
-            dc.cachedPhoneNumbers.Add("aac");
-            dc.cachedPhoneNumbers.Add("aba");
-            dc.cachedPhoneNumbers.Add("abb");
-            dc.cachedPhoneNumbers.Add("abc");
-            dc.cachedPhoneNumbers.Add("aca");
-            dc.cachedPhoneNumbers.Add("acb");
-            dc.cachedPhoneNumbers.Add("acc");
-            dc.cachedPhoneNumbers.Add("acc1");
-            dc.cachedPhoneNumbers.Add("acc2");
-
+            dc = new pnDataContext(cachedPhoneNumbers);
 
             cmbAutoComplete.ItemsSource = dc.cachedPhoneNumbers;
         }
@@ -127,6 +134,9 @@ namespace GreenPrintClient.CustomControls
 
         private void btnConfirm_Click(object sender, RoutedEventArgs e)
         {
+            var updatedList = localStorage.AddPhoneNumber(txtSMSNumber.Text);
+            dc.UpdateList(updatedList);
+
             RaisePhoneNumberConfirmedEvent("+" + cmbCountryPhonePrefix.SelectedValue + "-" + txtSMSNumber.Text);
             txtSMSNumber.Text = "";
         }
@@ -183,6 +193,7 @@ namespace GreenPrintClient.CustomControls
             {
                 System.Windows.MessageBox.Show("Please enter only digits (0-9) for a phone number", "Phone Number", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                 e.Handled = true;
+                txtSMSNumber.Focus();
                 return;
             }
         }

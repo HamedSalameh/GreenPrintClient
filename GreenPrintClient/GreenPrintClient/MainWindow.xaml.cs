@@ -30,10 +30,13 @@ namespace GreenPrintClient
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
         List<string> rcc;
+        List<string> cachedPhoneNumbers;
 
         SnackbarMessageQueue sbUIMessageQueue;
         SnackbarMessageQueue sbUIFatalMessageQueue;
         ChangeClientID changeClientID;
+
+        LocalStorage LocalStorage;
 
         public Boolean IsAddCC_AddingSMS { get; set; }
         public bool IsAddCC_AddingEmail { get; set; }
@@ -91,6 +94,9 @@ namespace GreenPrintClient
         public MainWindow()
         {
             InitializeComponent();
+
+            LocalStorage = new LocalStorage();
+            
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -102,6 +108,7 @@ namespace GreenPrintClient
         {
             settings = SettingManager.LoadSettings();
             rcc = SettingManager.LoadRCCList();
+            cachedPhoneNumbers = LocalStorage.LoadPhoneNumbers();
 
             countryCodeList = Countries.GetData();
             countryCodeList = Countries.GetDetailedDataDic();
