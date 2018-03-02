@@ -442,6 +442,10 @@ namespace GreenPrintClient
             btnAddCC_EmailAddress.IsEnabled = false;
         }
 
+        private void lstCCList_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+        }
+
         // Private helper methods
         private string buildDocumentName()
         {

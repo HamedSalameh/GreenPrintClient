@@ -250,8 +250,8 @@
 
         <ListBox        Margin="5" Padding="5" 
                         Name="lstCCList"     
-                        Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" Grid.ZIndex="1"
-                        Height="100"
+                        Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="2" Grid.ZIndex="2"
+                        Height="100" MouseEnter="lstCCList_MouseEnter"
                         
                         >
             <ListBox.ItemContainerStyle>

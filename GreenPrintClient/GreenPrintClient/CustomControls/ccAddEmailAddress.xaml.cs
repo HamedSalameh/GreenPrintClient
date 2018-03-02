@@ -147,8 +147,7 @@ namespace GreenPrintClient.CustomControls
             }
             else
             {
-                cmbAutoComplete.Visibility = Visibility.Hidden;
-                cmbAutoComplete.IsDropDownOpen = true;
+                HideAutoComplete();
             }
 
             txtEmailAddress.Focus();
@@ -159,8 +158,7 @@ namespace GreenPrintClient.CustomControls
             var updatedList = localStorage.AddEmailAddress(txtEmailAddress.Text);
             dc.UpdateList(updatedList);
 
-            cmbAutoComplete.Visibility = Visibility.Hidden;
-            cmbAutoComplete.IsDropDownOpen = false;
+            HideAutoComplete();
 
             RaisePhoneNumberConfirmedEvent(txtEmailAddress.Text);
             txtEmailAddress.Text = "";
@@ -175,14 +173,15 @@ namespace GreenPrintClient.CustomControls
 
         private void txtEmailAddress_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Tab)
-            {
-                cmbAutoComplete.Visibility = Visibility.Hidden;
-                cmbAutoComplete.IsDropDownOpen = false;
-            }
+
         }
 
         private void UserControl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        public void HideAutoComplete()
         {
             cmbAutoComplete.IsDropDownOpen = false;
             cmbAutoComplete.Visibility = Visibility.Hidden;
