@@ -442,27 +442,6 @@ namespace GreenPrintClient
             btnAddCC_EmailAddress.IsEnabled = false;
         }
 
-        //private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        //{
-        //    if (e.Key == Key.Enter)
-        //    {
-        //        if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-        //        {
-        //            System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-        //            "Add CC Address",
-        //            MessageBoxButton.OK,
-        //            MessageBoxImage.Warning);
-        //            return;
-        //        }
-
-        //        if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
-        //        {
-        //            lstCCList.Items.Add(txtAddCC.Text);
-        //            txtAddCC.Text = "";
-        //        }
-        //    }
-        //}
-
         // Private helper methods
         private string buildDocumentName()
         {

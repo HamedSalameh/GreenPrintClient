@@ -181,5 +181,11 @@ namespace GreenPrintClient.CustomControls
                 cmbAutoComplete.IsDropDownOpen = false;
             }
         }
+
+        private void UserControl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            cmbAutoComplete.IsDropDownOpen = false;
+            cmbAutoComplete.Visibility = Visibility.Hidden;
+        }
     }
 }

@@ -5,10 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GreenPrintClient.CustomControls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-
+             x:Name="ucAddEmailAddress"
              mc:Ignorable="d" 
              Background="Transparent"
-             d:DesignHeight="40" d:DesignWidth="240">
+             d:DesignHeight="40" d:DesignWidth="240" LostFocus="UserControl_LostFocus">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>

@@ -209,9 +209,19 @@ namespace GreenPrintClient.CustomControls
             if ((e.Key < System.Windows.Input.Key.D0 || e.Key > System.Windows.Input.Key.D9) && e.Key != System.Windows.Input.Key.Enter
                 && e.Key != System.Windows.Input.Key.Delete
                 && e.Key != System.Windows.Input.Key.Tab
+                && e.Key != System.Windows.Input.Key.NumPad0 && e.Key != System.Windows.Input.Key.NumPad1 
+                && e.Key != System.Windows.Input.Key.NumPad2 && e.Key != System.Windows.Input.Key.NumPad3 
+                && e.Key != System.Windows.Input.Key.NumPad4 && e.Key != System.Windows.Input.Key.NumPad5
+                && e.Key != System.Windows.Input.Key.NumPad6 && e.Key != System.Windows.Input.Key.NumPad7
+                && e.Key != System.Windows.Input.Key.NumPad8 && e.Key != System.Windows.Input.Key.NumPad9
+                
                 )
             {
+                cmbAutoComplete.Visibility = Visibility.Hidden;
+                cmbAutoComplete.IsDropDownOpen = false;
+
                 System.Windows.MessageBox.Show("Please enter only digits (0-9) for a phone number", "Phone Number", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
+                
                 e.Handled = true;
                 txtSMSNumber.Focus();
                 return;
@@ -225,7 +235,13 @@ namespace GreenPrintClient.CustomControls
 
         private void txtSMSNumber_LostFocus(object sender, RoutedEventArgs e)
         {
-                
+
+        }
+
+        private void UserControl_LostFocus(object sender, RoutedEventArgs e)
+        {
+            cmbAutoComplete.IsDropDownOpen = false;
+            cmbAutoComplete.Visibility = Visibility.Hidden;
         }
     }
 
