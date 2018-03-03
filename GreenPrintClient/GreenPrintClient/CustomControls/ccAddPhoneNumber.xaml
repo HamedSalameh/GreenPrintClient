@@ -6,7 +6,7 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:local="clr-namespace:GreenPrintClient.CustomControls"
              mc:Ignorable="d" 
-             d:DesignHeight="40" d:DesignWidth="240"
+             d:DesignHeight="40" d:DesignWidth="275"
              Background="Transparent" LostFocus="UserControl_LostFocus">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,6 +18,10 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top">
+            <materialDesign:PackIcon Kind="Phone" 
+                                     Foreground="green"
+                                     VerticalAlignment="Center" HorizontalAlignment="Left" HorizontalContentAlignment="Left" 
+                                     Width="30" Height="30" />
             <ComboBox       Margin="5"        
                             Name="cmbCountryPhonePrefix"      
                             Width="70" 
@@ -25,6 +29,7 @@
                             SelectionChanged="cmbCountryPhonePrefix_SelectionChanged"
                             >
             </ComboBox>
+            
 
             <StackPanel Margin="5">
                 <TextBox    Margin="3"        

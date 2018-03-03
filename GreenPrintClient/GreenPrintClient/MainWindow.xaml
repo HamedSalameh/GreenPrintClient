@@ -40,6 +40,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
@@ -261,7 +262,17 @@
             </ListBox.ItemContainerStyle>
         </ListBox>
 
-        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="9" Grid.ZIndex="1">
+        <CheckBox   Name="chkSendCopyToMe"
+                    Margin="5"
+                    FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana"
+                    Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="9"
+                    Style="{StaticResource MaterialDesignCheckBox}"
+                    IsChecked="True">
+            Send copy of signed document to me
+                
+        </CheckBox>
+
+        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="10" Grid.ZIndex="1">
         </Separator >
 
         <TextBlock      
@@ -269,15 +280,15 @@
                         Padding="5" 
                         Name="txtMessages" 
                         TextWrapping="WrapWithOverflow"
-                        Grid.Row="10" Grid.ColumnSpan="2" Grid.ZIndex="1"
+                        Grid.Row="11" Grid.ColumnSpan="2" Grid.ZIndex="1"
                         Height="50">
 
         </TextBlock>
 
-        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="11" Grid.ZIndex="1">
+        <Separator Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="12" Grid.ZIndex="1">
         </Separator>
 
-        <WrapPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="12" HorizontalAlignment="Right" >
+        <WrapPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="13" HorizontalAlignment="Right" >
             <Button Margin="5" Padding="5" 
                     Name="btnCancel" 
                     HorizontalContentAlignment="Center" 
