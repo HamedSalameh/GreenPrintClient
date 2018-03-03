@@ -7,6 +7,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <customconverters:InverseBooleanConverter x:Key="InverseBoolToVisibility" />
+            <customconverters:BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />
 

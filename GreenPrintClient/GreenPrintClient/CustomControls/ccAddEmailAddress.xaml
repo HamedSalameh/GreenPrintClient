@@ -29,7 +29,7 @@
                     Margin="5"
                     Name="cmbAutoComplete"
                     SelectionChanged="cmbAutoComplete_SelectionChanged"
-                    Visibility="Hidden"
+                    Visibility="{Binding Path=IsDropDownOpen, ElementName=cmbAutoComplete, Converter={StaticResource BooleanToVisibility }}"
                     Width="90"
                     />
             </StackPanel>

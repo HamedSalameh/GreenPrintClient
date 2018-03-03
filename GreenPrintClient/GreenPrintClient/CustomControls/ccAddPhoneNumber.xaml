@@ -26,19 +26,20 @@
                             >
             </ComboBox>
 
-
             <StackPanel Margin="5">
                 <TextBox    Margin="3"        
                             Name="txtSMSNumber"               
                             Width="90" 
-                            HorizontalAlignment="Center" KeyUp="txtSMSNumber_KeyUp" KeyDown="txtSMSNumber_KeyDown" LostFocus="txtSMSNumber_LostFocus"
+                            HorizontalAlignment="Center" KeyUp="txtSMSNumber_KeyUp" 
+                            KeyDown="txtSMSNumber_KeyDown" 
+                            LostFocus="txtSMSNumber_LostFocus"
                             />
                 <ComboBox
                     Margin="5"
                     Name="cmbAutoComplete"
                     PreviewTextInput="cmbAutoComplete_PreviewTextInput"
                     SelectionChanged="cmbAutoComplete_SelectionChanged"
-                    Visibility="Hidden"
+                    Visibility="{Binding Path=IsDropDownOpen, ElementName=cmbAutoComplete, Converter={StaticResource BooleanToVisibility }}"
                     Width="90"
                     >
 
