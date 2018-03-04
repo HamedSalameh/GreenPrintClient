@@ -32,8 +32,6 @@ namespace GreenPrintClient
         List<string> rcc;
         List<string> cachedPhoneNumbers;
 
-        SnackbarMessageQueue sbUIMessageQueue;
-        SnackbarMessageQueue sbUIFatalMessageQueue;
         ChangeClientID changeClientID;
 
         LocalStorage LocalStorage;
@@ -43,8 +41,10 @@ namespace GreenPrintClient
 
         private async Task<bool> validateClientIDAsync()
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(GPServicesBase);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(GPServicesBase)
+            };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -80,8 +80,10 @@ namespace GreenPrintClient
                 }
                 catch
                 {
-                    clientValidationResponse = new ClientValidationResponse();
-                    clientValidationResponse.Message = res.Replace("\"", "").Replace("\\", "");
+                    clientValidationResponse = new ClientValidationResponse
+                    {
+                        Message = res.Replace("\"", "").Replace("\\", "")
+                    };
 
                     txtMessages.Inlines.Add(clientValidationResponse.Message);
                 }
@@ -112,11 +114,6 @@ namespace GreenPrintClient
 
             countryCodeList = Countries.GetData();
             countryCodeList = Countries.GetDetailedDataDic();
-
-            //sbUIMessageQueue = sbUIMessages.MessageQueue;
-            //sbUIFatalMessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(30000));
-            // Temporary Fatal errors message queues
-            //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
 
             controlAddPhoneNumber.PhoneNumberConfirmed += ControlAddPhoneNumber_PhoneNumberConfirmed;
             controlAddEmailAddress.EmailAddressConfirmed += ControlAddEmailAddress_EmailAddressConfirmed;
@@ -474,14 +471,16 @@ namespace GreenPrintClient
         }
         private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
         {
-            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
-            req.ClientID = clientID;
-            req.DocumentName = documentName;
-            req.DocumentBytes = null;
-            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
-            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
-            req.CarbonCopy_EMailAddressesList = CCList_emails;
-            req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest
+            {
+                ClientID = clientID,
+                DocumentName = documentName,
+                DocumentBytes = null,
+                GuestSign_RecipientEmailAddress = txtEmailAddress.Text,
+                GuestSign_RecipientSMSNumber = recipientSMSNumber,
+                CarbonCopy_EMailAddressesList = CCList_emails,
+                CarbonCopy_SMSPhoneNumbersList = CCList_phones
+            };
             return req;
         }
         private string extractEmailCCList()
@@ -525,8 +524,7 @@ namespace GreenPrintClient
                         // Not an email
                         var newitem = item.ToString().Replace('-', ' ').Replace('.', ' ').Replace(" ", "");    // removing dashes
                         // removing dots
-                        long newnumber;
-                        long.TryParse(newitem, out newnumber);
+                        long.TryParse(newitem, out long newnumber);
 
                         if (newnumber != 0)
                         {

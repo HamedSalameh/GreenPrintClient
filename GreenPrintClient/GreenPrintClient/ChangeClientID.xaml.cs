@@ -47,14 +47,14 @@ namespace GreenPrintClient
         private async void Save_ClickAsync(object sender, RoutedEventArgs e)
         {
             // Validate credentials with server
-            bool isValid = false;
-            UserValidation userValidationContract = new UserValidation();
-            userValidationContract.UserName = txtNewClientID.Text;
-            userValidationContract.password = txtNewClientPassword.Password;
+            UserValidation userValidationContract = new UserValidation
+            {
+                UserName = txtNewClientID.Text,
+                password = txtNewClientPassword.Password
+            };
 
             await valideUserCredentialsWithServer(userValidationContract);
             wChangeClient.Focus();
-            
         }
 
         private async Task valideUserCredentialsWithServer(UserValidation userValidationContract)
@@ -64,8 +64,10 @@ namespace GreenPrintClient
 
             string req = JsonConvert.SerializeObject(userValidationContract);
 
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:49639/Account/TestUserCredentials");
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri("http://localhost:49639/Account/TestUserCredentials")
+            };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
@@ -114,8 +116,10 @@ namespace GreenPrintClient
             catch
             {
                 txtServerResponse.Inlines.Clear();
-                clientValidationResponse = new ClientValidationResponse();
-                clientValidationResponse.Message = res.Replace("\"", "").Replace("\\", "");
+                clientValidationResponse = new ClientValidationResponse
+                {
+                    Message = res.Replace("\"", "").Replace("\\", "")
+                };
 
                 txtServerResponse.Inlines.Add(clientValidationResponse.Message);
 
