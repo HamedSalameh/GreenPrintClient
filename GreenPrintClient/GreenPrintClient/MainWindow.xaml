@@ -114,7 +114,9 @@
                     
         </WrapPanel>
         
-        <TextBox        Margin="5" Name="txtDocumentName"       Grid.Column="1" Grid.Row="1" Width="196" TextChanged="txtDocumentName_TextChanged"></TextBox>
+        <TextBox        Margin="5" Name="txtDocumentName"       
+                        Grid.Column="1" Grid.Row="1" Width="196" 
+                        TextChanged="txtDocumentName_TextChanged"></TextBox>
         <WrapPanel Grid.Column="0" Grid.Row="1">
             <Label          Margin="5" Name="lblDocumentName"       Grid.Column="0" Grid.Row="1" FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Document Name</Label>
             <materialDesign:PackIcon Kind="HelpCircle" 

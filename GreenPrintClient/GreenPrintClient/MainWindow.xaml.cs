@@ -433,13 +433,17 @@ namespace GreenPrintClient
         {
             btnAddCC_SMSNumber.IsEnabled = false;
             btnAddCC_EmailAddress.IsEnabled = true;
+
             controlAddPhoneNumber.SetCountryListItemSource(countryCodeList, 111, false);
+            controlAddPhoneNumber.HideAutoComplete();
         }
 
         private void btnAddCC_EmailAddress_Click(object sender, RoutedEventArgs e)
         {
             btnAddCC_SMSNumber.IsEnabled = true;
             btnAddCC_EmailAddress.IsEnabled = false;
+
+            controlAddEmailAddress.HideAutoComplete();
         }
 
         private void lstCCList_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)

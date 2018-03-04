@@ -8,7 +8,7 @@
              x:Name="ucAddEmailAddress"
              mc:Ignorable="d" 
              Background="Transparent"
-             d:DesignHeight="40" d:DesignWidth="275" LostFocus="UserControl_LostFocus">
+             d:DesignHeight="40" d:DesignWidth="240" LostFocus="UserControl_LostFocus">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -19,18 +19,14 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Grid.Column="0" Grid.Row="0" VerticalAlignment="Top">
-            <materialDesign:PackIcon Kind="Email" 
-                                     VerticalAlignment="Center"  HorizontalAlignment="Left" HorizontalContentAlignment="Left" 
-                                     Foreground="Green"
-                                     Width="30" Height="30"/>
-            <StackPanel Margin="5">
+          
+            <StackPanel >
                 <TextBox    Margin="5"        
                             Name="txtEmailAddress"               
                             Width="170" 
                             VerticalAlignment="Bottom" KeyUp="txtEmailAddress_KeyUp" KeyDown="txtEmailAddress_KeyDown"
                             />
                 <ComboBox
-                    Margin="5"
                     Name="cmbAutoComplete"
                     SelectionChanged="cmbAutoComplete_SelectionChanged"
                     Visibility="{Binding Path=IsDropDownOpen, ElementName=cmbAutoComplete, Converter={StaticResource BooleanToVisibility }}"

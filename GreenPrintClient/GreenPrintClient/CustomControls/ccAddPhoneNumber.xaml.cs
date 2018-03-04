@@ -140,8 +140,7 @@ namespace GreenPrintClient.CustomControls
             var updatedList = localStorage.AddPhoneNumber(txtSMSNumber.Text);
             dc.UpdateList(updatedList);
 
-            cmbAutoComplete.Visibility = Visibility.Hidden;
-            cmbAutoComplete.IsDropDownOpen = false;
+            hideAutoComplete();
 
             RaisePhoneNumberConfirmedEvent("+" + cmbCountryPhonePrefix.SelectedValue + "-" + txtSMSNumber.Text);
             txtSMSNumber.Text = "";
@@ -185,8 +184,7 @@ namespace GreenPrintClient.CustomControls
             }
             else
             {
-                cmbAutoComplete.Visibility = Visibility.Hidden;
-                cmbAutoComplete.IsDropDownOpen = true;
+                hideAutoComplete();
             }
 
 
@@ -217,8 +215,7 @@ namespace GreenPrintClient.CustomControls
                 
                 )
             {
-                cmbAutoComplete.Visibility = Visibility.Hidden;
-                cmbAutoComplete.IsDropDownOpen = false;
+                hideAutoComplete();
 
                 System.Windows.MessageBox.Show("Please enter only digits (0-9) for a phone number", "Phone Number", MessageBoxButton.OK, MessageBoxImage.Exclamation, MessageBoxResult.OK);
                 
@@ -228,9 +225,14 @@ namespace GreenPrintClient.CustomControls
             }
             else if (e.Key == System.Windows.Input.Key.Tab)
             {
-                cmbAutoComplete.Visibility = Visibility.Hidden;
-                cmbAutoComplete.IsDropDownOpen = false;
+                hideAutoComplete();
             }
+        }
+
+        private void hideAutoComplete()
+        {
+            cmbAutoComplete.Visibility = Visibility.Hidden;
+            cmbAutoComplete.IsDropDownOpen = false;
         }
 
         private void txtSMSNumber_LostFocus(object sender, RoutedEventArgs e)
@@ -241,6 +243,11 @@ namespace GreenPrintClient.CustomControls
         private void UserControl_LostFocus(object sender, RoutedEventArgs e)
         {
             
+        }
+
+        public void HideAutoComplete()
+        {
+            hideAutoComplete();
         }
     }
 
