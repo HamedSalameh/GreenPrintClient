@@ -345,6 +345,7 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            
             // Reset the messages windows
             txtMessages.Text = "";
             // Show the loading spinnger
@@ -360,6 +361,11 @@ namespace GreenPrintClient
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
+
+            if (chkSendCopyToMe.IsChecked.Value == true)
+            {
+                CCList_emails += "," + clientID;
+            }
 
             if (cmbCountryPhonePrefix.SelectedValue == null)
             {
