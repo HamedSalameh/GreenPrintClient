@@ -10,7 +10,7 @@ using System.Windows;
 [assembly: AssemblyTitle("GreenPrintClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("GreenPrint")]
 [assembly: AssemblyProduct("GreenPrintClient")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]

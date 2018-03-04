@@ -1,4 +1,5 @@
-﻿using GreenPrintClient.CustomControls;
+﻿using GreenPrintClient.Contracts;
+using GreenPrintClient.CustomControls;
 using GreenPrintClient.Helpers;
 using GreenPrintClient.Helpers.Contracts;
 using MaterialDesignThemes.Wpf;
@@ -342,7 +343,8 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
-            
+            ClientAppVersion clientAppVersion = new ClientAppVersion();
+
             // Reset the messages windows
             txtMessages.Text = "";
             // Show the loading spinnger
@@ -471,7 +473,7 @@ namespace GreenPrintClient
         }
         private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
         {
-            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersion())
             {
                 ClientID = clientID,
                 DocumentName = documentName,
