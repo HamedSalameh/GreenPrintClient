@@ -1,4 +1,9 @@
-﻿using System;
+﻿using GreenPrintClient.CustomControls;
+using GreenPrintClient.Helpers;
+using GreenPrintClient.Helpers.Contracts;
+using MaterialDesignThemes.Wpf;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,18 +15,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
-using GreenPrintClient.Helpers;
-using GreenPrintClient.Helpers.Contracts;
-using MaterialDesignThemes.Wpf;
-using Newtonsoft.Json;
 
 namespace GreenPrintClient
 {
@@ -35,10 +30,16 @@ namespace GreenPrintClient
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
         List<string> rcc;
+        List<string> cachedPhoneNumbers;
 
         SnackbarMessageQueue sbUIMessageQueue;
         SnackbarMessageQueue sbUIFatalMessageQueue;
         ChangeClientID changeClientID;
+
+        LocalStorage LocalStorage;
+
+        public Boolean IsAddCC_AddingSMS { get; set; }
+        public bool IsAddCC_AddingEmail { get; set; }
 
         private async Task<bool> validateClientIDAsync()
         {
@@ -89,10 +90,13 @@ namespace GreenPrintClient
 
             return true;
         }
-        
+
         public MainWindow()
         {
             InitializeComponent();
+
+            LocalStorage = new LocalStorage();
+            
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -104,6 +108,7 @@ namespace GreenPrintClient
         {
             settings = SettingManager.LoadSettings();
             rcc = SettingManager.LoadRCCList();
+            cachedPhoneNumbers = LocalStorage.LoadPhoneNumbers();
 
             countryCodeList = Countries.GetData();
             countryCodeList = Countries.GetDetailedDataDic();
@@ -112,6 +117,11 @@ namespace GreenPrintClient
             //sbUIFatalMessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(30000));
             // Temporary Fatal errors message queues
             //sbUIMessages.MessageQueue = sbUIFatalMessageQueue;
+
+            controlAddPhoneNumber.PhoneNumberConfirmed += ControlAddPhoneNumber_PhoneNumberConfirmed;
+            controlAddEmailAddress.EmailAddressConfirmed += ControlAddEmailAddress_EmailAddressConfirmed;
+
+            IsAddCC_AddingSMS = true;
 
             validateCriticalSettings();
             populateCCList();
@@ -136,7 +146,45 @@ namespace GreenPrintClient
                 //appbar_ClientID.Text = clientID;
             }
 
+        }
 
+        private void updateCCList(string newCCItem)
+        {
+            if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+            {
+                System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+                    "Add CC Address",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            //Update registry
+            var _rcc = SettingManager.LoadRCCList();
+            if (_rcc == null)
+                _rcc = new List<string>();
+
+            if (_rcc.IndexOf(newCCItem) == -1 || _rcc.Contains(newCCItem) == false)
+            {
+                _rcc.Add(newCCItem);
+                lstCCList.Items.Add(newCCItem);
+            }
+
+            SettingManager.updateRCCList(_rcc);
+        }
+
+        private void ControlAddEmailAddress_EmailAddressConfirmed(object sender, RoutedEventArgs e)
+        {
+            string mailAddress = ((EmailAddressRoutedEventArgs)e)?.EmailAddressValue;
+
+            updateCCList(mailAddress);
+        }
+
+        private void ControlAddPhoneNumber_PhoneNumberConfirmed(object sender, RoutedEventArgs e)
+        {
+            string number = ((PhoneNumberRoutedEventArgs)e)?.PhoneNumberValue;
+
+            updateCCList(number);
         }
 
         private void populateCCList()
@@ -225,37 +273,37 @@ namespace GreenPrintClient
 
         }
 
-        private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
-        {
-            if (txtAddCC.Text.Length < 5)
-                return;
+        //private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (txtAddCC.Text.Length < 5)
+        //        return;
 
-            if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-            {
-                System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                    "Add CC Address",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                return;
-            }
+        //    if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
+        //    {
+        //        System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
+        //            "Add CC Address",
+        //            MessageBoxButton.OK,
+        //            MessageBoxImage.Warning);
+        //        return;
+        //    }
 
-            var newItem = txtAddCC.Text;
-            lstCCList.Items.Add(txtAddCC.Text);
-            txtAddCC.Text = "";
+        //    var newItem = txtAddCC.Text;
+        //    lstCCList.Items.Add(txtAddCC.Text);
+        //    txtAddCC.Text = "";
 
-            // Update registry
-            var _rcc = SettingManager.LoadRCCList();
-            if (_rcc == null)
-                _rcc = new List<string>();
+        //    // Update registry
+        //    var _rcc = SettingManager.LoadRCCList();
+        //    if (_rcc == null)
+        //        _rcc = new List<string>();
 
-            // if the item is not in the list, then add it
-            if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
-            {
-                _rcc.Add(newItem);
-            }
+        //    // if the item is not in the list, then add it
+        //    if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
+        //    {
+        //        _rcc.Add(newItem);
+        //    }
 
-            SettingManager.updateRCCList(_rcc);
-        }
+        //    SettingManager.updateRCCList(_rcc);
+        //}
 
         private void cmbCountryPhonePrefix_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -286,7 +334,7 @@ namespace GreenPrintClient
             {
                 System.Diagnostics.Process.Start(e.Uri.ToString());
             }
-            catch(Exception Ex)
+            catch (Exception Ex)
             {
                 System.Windows.MessageBox.Show($"GreenPrint client was not able to navigate to {e?.Uri?.ToString()} due to internal error.\r\n{Ex.Message}",
                     "Navigate",
@@ -297,6 +345,7 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            
             // Reset the messages windows
             txtMessages.Text = "";
             // Show the loading spinnger
@@ -312,6 +361,11 @@ namespace GreenPrintClient
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
             string CCList_phones = extractPhoneNumbersCCList();
+
+            if (chkSendCopyToMe.IsChecked.Value == true)
+            {
+                CCList_emails += "," + clientID;
+            }
 
             if (cmbCountryPhonePrefix.SelectedValue == null)
             {
@@ -357,7 +411,7 @@ namespace GreenPrintClient
 
             pbLoading.Visibility = Visibility.Hidden;
         }
-        
+
         private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
         {
             changeClientID = new ChangeClientID(clientID);
@@ -381,25 +435,25 @@ namespace GreenPrintClient
 
         }
 
-        private void txtAddCC_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void btnAddCC_SMSNumber_Click(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-                {
-                    System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-                    "Add CC Address",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-                    return;
-                }
+            btnAddCC_SMSNumber.IsEnabled = false;
+            btnAddCC_EmailAddress.IsEnabled = true;
 
-                if (string.IsNullOrEmpty(txtAddCC.Text) == false && txtAddCC.Text.Length > 5)
-                {
-                    lstCCList.Items.Add(txtAddCC.Text);
-                    txtAddCC.Text = "";
-                }
-            }
+            controlAddPhoneNumber.SetCountryListItemSource(countryCodeList, 111, false);
+            controlAddPhoneNumber.HideAutoComplete();
+        }
+
+        private void btnAddCC_EmailAddress_Click(object sender, RoutedEventArgs e)
+        {
+            btnAddCC_SMSNumber.IsEnabled = true;
+            btnAddCC_EmailAddress.IsEnabled = false;
+
+            controlAddEmailAddress.HideAutoComplete();
+        }
+
+        private void lstCCList_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
         }
 
         // Private helper methods
@@ -455,7 +509,7 @@ namespace GreenPrintClient
             }
 
             return list;
-        }
+        }   
         private string extractPhoneNumbersCCList()
         {
             List<string> phoneNumbers = new List<string>();
