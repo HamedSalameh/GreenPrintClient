@@ -89,6 +89,7 @@
     </Compile>
     <Compile Include="Consts.cs" />
     <Compile Include="Contracts\ClientAppVersion.cs" />
+    <Compile Include="Contracts\ClientValidationResponse.cs" />
     <Compile Include="Contracts\UserValidationContract.cs" />
     <Compile Include="CustomControls\ccAddEmailAddress.xaml.cs">
       <DependentUpon>ccAddEmailAddress.xaml</DependentUpon>

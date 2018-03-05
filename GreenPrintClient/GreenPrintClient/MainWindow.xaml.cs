@@ -1,8 +1,6 @@
 ﻿using GreenPrintClient.Contracts;
 using GreenPrintClient.CustomControls;
 using GreenPrintClient.Helpers;
-using GreenPrintClient.Helpers.Contracts;
-using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -26,7 +24,7 @@ namespace GreenPrintClient
     /// </summary>
     public partial class MainWindow
     {
-        private string GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
+        private string GPServerBase, GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
@@ -233,6 +231,16 @@ namespace GreenPrintClient
             if (string.IsNullOrEmpty(GPServicesBase))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue("GPServerBase", out GPServerBase);
+            if (string.IsNullOrEmpty(GPServerBase))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint server URL coould not be laded.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);

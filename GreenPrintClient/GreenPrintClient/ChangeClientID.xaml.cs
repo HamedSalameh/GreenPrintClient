@@ -1,8 +1,6 @@
 ﻿using GreenPrintClient.Contracts;
-using GreenPrintClient.Helpers.Contracts;
 using Newtonsoft.Json;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,16 +17,24 @@ namespace GreenPrintClient
     /// </summary>
     public partial class ChangeClientID : Window
     {
+        private string gpServerBase;
+
         public string NewClientID
         {
             get { return txtNewClientID.Text; }
         }
 
-        public ChangeClientID(string oldClientID = "")
+        public ChangeClientID(string GreenPrintServerBaseAddress, string oldClientID = "")
         {
+            if(string.IsNullOrEmpty(GreenPrintServerBaseAddress))
+            {
+                throw new ArgumentException("Base server address must not be empty or null", nameof(GreenPrintServerBaseAddress));
+            }
+
             InitializeComponent();
 
             txtNewClientID.Text = oldClientID;
+            gpServerBase = GreenPrintServerBaseAddress;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -66,12 +72,12 @@ namespace GreenPrintClient
 
             HttpClient client = new HttpClient
             {
-                BaseAddress = new Uri("http://localhost:49639/Account/TestUserCredentials")
+                BaseAddress = new Uri($"{gpServerBase}/Account/TestUserCredentials")
             };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            string path = $"http://localhost:49639/Account/TestUserCredentials";
+            string path = $"{gpServerBase}/Account/TestUserCredentials";
             HttpResponseMessage response = await client.PostAsync(path,
                 new StringContent(req, Encoding.UTF8, "application/json"));
 

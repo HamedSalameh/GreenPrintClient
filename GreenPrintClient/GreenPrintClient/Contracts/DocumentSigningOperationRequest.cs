@@ -1,7 +1,7 @@
 ﻿using GreenPrintClient.Contracts;
 using System;
 
-namespace GreenPrintClient
+namespace GreenPrintClient.Contracts
 {
     [Serializable]
     public class DocumentSigningOperationRequest
