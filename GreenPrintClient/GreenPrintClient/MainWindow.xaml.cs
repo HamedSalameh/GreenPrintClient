@@ -351,7 +351,7 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
-            ClientAppVersion clientAppVersion = new ClientAppVersion();
+            ClientAppVersionInfo clientAppVersion = new ClientAppVersionInfo();
 
             // Reset the messages windows
             txtMessages.Text = "";
@@ -481,7 +481,7 @@ namespace GreenPrintClient
         }
         private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
         {
-            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersion())
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersionInfo())
             {
                 ClientID = clientID,
                 DocumentName = documentName,

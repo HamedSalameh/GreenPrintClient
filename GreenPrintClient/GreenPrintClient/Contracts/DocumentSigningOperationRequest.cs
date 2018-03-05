@@ -6,15 +6,15 @@ namespace GreenPrintClient.Contracts
     [Serializable]
     public class DocumentSigningOperationRequest
     {
-        public DocumentSigningOperationRequest(ClientAppVersion clientAppVersion)
+        public DocumentSigningOperationRequest(ClientAppVersionInfo clientAppVersion)
         {
             if (clientAppVersion == null)
                 throw new ArgumentException("ClientAppVersion is null", nameof(clientAppVersion));
 
-            this.ClientVersion = clientAppVersion.ClientVersion;
-            this.ClientOSBits = clientAppVersion.ClientOSBits;
-            this.ClientOS = clientAppVersion.ClientOS;
-            this.Description = clientAppVersion.Description;
+            this.ClientAppVersion = clientAppVersion.ClientAppVersion;
+            this.ClientAppOSBits = clientAppVersion.ClientAppOSBits;
+            this.ClientAppOS = clientAppVersion.ClientAppOS;
+            this.ClientAppDescription = clientAppVersion.ClientAppDescription;
         }
 
         public string ClientID { get; set; }
@@ -33,15 +33,15 @@ namespace GreenPrintClient.Contracts
 
         // product version
         // Stable version of the client application versbio
-        public string ClientVersion { get; set; }
+        public string ClientAppVersion { get; set; }
 
         // General text
-        public string Description { get; set; }
+        public string ClientAppDescription { get; set; }
 
         // Name of the current operating syste,
-        public string ClientOS { get; set; }
+        public string ClientAppOS { get; set; }
 
         // 32bit (x86) or 64bit
-        public string ClientOSBits { get; set; }
+        public string ClientAppOSBits { get; set; }
     }
 }
