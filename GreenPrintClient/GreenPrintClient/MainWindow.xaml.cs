@@ -24,7 +24,7 @@ namespace GreenPrintClient
     /// </summary>
     public partial class MainWindow
     {
-        private string GPServerBase, GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
+        private string GPServerBase, GPServicesBase, PRServiceURL, USServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
@@ -47,7 +47,7 @@ namespace GreenPrintClient
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            string path = $"{GPServicesBase}{UMServiceURL}/" + clientID;
+            string path = $"{GPServicesBase}{USServiceURL}/" + clientID;
             HttpResponseMessage response = await client.GetAsync(path);
 
             if (!response.IsSuccessStatusCode)
@@ -247,8 +247,8 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("UMS", out UMServiceURL);
-            if (string.IsNullOrEmpty(UMServiceURL))
+            settings.TryGetValue("USS", out USServiceURL);
+            if (string.IsNullOrEmpty(USServiceURL))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
                     "GreenPrint Client Initialization",
@@ -378,7 +378,11 @@ namespace GreenPrintClient
             {
                 cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111]; // default to israel
             }
-            string recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
+            string recipientSMSNumber = string.Empty;
+            if (rbDeviceSign.IsChecked.Value == true && txtSMSNumber.Text.Length > 0)
+            {
+                recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
+            }
 
             // Clear any message in messages text box
             txtMessages.Text = "";
@@ -421,7 +425,7 @@ namespace GreenPrintClient
 
         private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
         {
-            changeClientID = new ChangeClientID(clientID);
+            changeClientID = new ChangeClientID(GPServerBase, clientID);
             changeClientID.Closed += ChangeClientID_Closed;
 
             changeClientID.ShowDialog();
