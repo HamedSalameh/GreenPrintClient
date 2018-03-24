@@ -31,6 +31,8 @@ namespace GreenPrintClient.Contracts
 
         public string CarbonCopy_EMailAddressesList { get; set; }
 
+        public string Comments { get; set; }
+
         // product version
         // Stable version of the client application versbio
         public string ClientAppVersion { get; set; }

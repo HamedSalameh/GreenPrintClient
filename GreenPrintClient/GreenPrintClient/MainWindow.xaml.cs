@@ -352,11 +352,6 @@ namespace GreenPrintClient
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
             ClientAppVersionInfo clientAppVersion = new ClientAppVersionInfo();
-
-            // Reset the messages windows
-            txtMessages.Text = "";
-            // Show the loading spinnger
-            pbLoading.Visibility = Visibility.Visible;
             // Execute pre-conditions validations
             bool validationResult = await validateClientIDAsync();
             if (validationResult == false)
@@ -364,6 +359,17 @@ namespace GreenPrintClient
                 pbLoading.Visibility = Visibility.Hidden;
                 return;
             }
+
+            if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.DEFAULT_MAX_SUPPORTED_SMS_LENGTH)
+            {
+                MessageBox.Show("Comments length is too long", "Comments", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
+            }
+
+            // Reset the messages windows
+            txtMessages.Text = "";
+            // Show the loading spinnger
+            pbLoading.Visibility = Visibility.Visible;
 
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
@@ -384,6 +390,10 @@ namespace GreenPrintClient
                 recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
             }
 
+
+            string requestComments = txtComments.Text;
+            
+
             // Clear any message in messages text box
             txtMessages.Text = "";
 
@@ -396,7 +406,7 @@ namespace GreenPrintClient
             documentName = buildDocumentName();
 
             // Build DSO request
-            DocumentSigningOperationRequest req = buildDSORequest(documentName, CCList_emails, CCList_phones, recipientSMSNumber);
+            DocumentSigningOperationRequest req = buildDSORequest(documentName, CCList_emails, CCList_phones, recipientSMSNumber, requestComments);
             // Get the printed document as byte array
             byte[] data = null;
             data = GetLatestPrint();
@@ -463,6 +473,10 @@ namespace GreenPrintClient
             controlAddEmailAddress.HideAutoComplete();
         }
 
+        private void txtComments_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+        }
+
         private void lstCCList_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
         }
@@ -483,7 +497,7 @@ namespace GreenPrintClient
 
             return documentName;
         }
-        private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
+        private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber, string comments)
         {
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersionInfo())
             {
@@ -493,7 +507,9 @@ namespace GreenPrintClient
                 GuestSign_RecipientEmailAddress = txtEmailAddress.Text,
                 GuestSign_RecipientSMSNumber = recipientSMSNumber,
                 CarbonCopy_EMailAddressesList = CCList_emails,
-                CarbonCopy_SMSPhoneNumbersList = CCList_phones
+                CarbonCopy_SMSPhoneNumbersList = CCList_phones,
+
+                Comments = comments
             };
             return req;
         }

@@ -8,6 +8,8 @@ namespace GreenPrintClient
 {
     public static class Consts
     {
+        public const int DEFAULT_MAX_SUPPORTED_SMS_LENGTH = 134;
+
         // Max supported phone number length, while taking into consideration international and local prefixes.
         public const int DEFAULT_MAX_PHONE_NUMBER_LENGTH = 20;
 
