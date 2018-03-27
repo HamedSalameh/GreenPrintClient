@@ -351,7 +351,19 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.DEFAULT_MAX_SUPPORTED_SMS_LENGTH)
+            {
+                MessageBox.Show("Comments length is too long", "Comments", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
+            }
+
+
             ClientAppVersionInfo clientAppVersion = new ClientAppVersionInfo();
+
+            // Reset the messages windows
+            txtMessages.Text = "";
+            // Show the loading spinnger
+            pbLoading.Visibility = Visibility.Visible;
             // Execute pre-conditions validations
             bool validationResult = await validateClientIDAsync();
             if (validationResult == false)
@@ -359,17 +371,6 @@ namespace GreenPrintClient
                 pbLoading.Visibility = Visibility.Hidden;
                 return;
             }
-
-            if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.DEFAULT_MAX_SUPPORTED_SMS_LENGTH)
-            {
-                MessageBox.Show("Comments length is too long", "Comments", MessageBoxButton.OK, MessageBoxImage.Stop);
-                return;
-            }
-
-            // Reset the messages windows
-            txtMessages.Text = "";
-            // Show the loading spinnger
-            pbLoading.Visibility = Visibility.Visible;
 
             string documentName = string.Empty;
             string CCList_emails = extractEmailCCList();
@@ -385,9 +386,14 @@ namespace GreenPrintClient
                 cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111]; // default to israel
             }
             string recipientSMSNumber = string.Empty;
-            if (rbDeviceSign.IsChecked.Value == true && txtSMSNumber.Text.Length > 0)
+            if (rbRemoteSign.IsChecked.Value == true && txtSMSNumber.Text.Length > 0)
             {
                 recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
+            }
+
+            if (rbRemoteSign.IsChecked.Value == true && txtEmailAddress.Text.Length > 0)
+            {
+                
             }
 
 
