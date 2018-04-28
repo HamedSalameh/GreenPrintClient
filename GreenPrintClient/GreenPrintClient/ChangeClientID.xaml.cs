@@ -47,7 +47,6 @@ namespace GreenPrintClient
         private async void Save_ClickAsync(object sender, RoutedEventArgs e)
         {
             // Validate credentials with server
-            bool isValid = false;
             UserValidation userValidationContract = new UserValidation();
             userValidationContract.UserName = txtNewClientID.Text;
             userValidationContract.password = txtNewClientPassword.Password;
