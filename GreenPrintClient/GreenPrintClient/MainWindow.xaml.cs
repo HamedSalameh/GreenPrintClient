@@ -250,7 +250,7 @@ namespace GreenPrintClient
                 Environment.Exit(1);
             }
 
-            settings.TryGetValue(Consts.ConfigurationSetting_UMS, out UMServiceURL);
+            settings.TryGetValue(Consts.ConfigurationSetting_USS, out UMServiceURL);
             if (string.IsNullOrEmpty(UMServiceURL))
             {
                 MessageBox.Show($"GreenPrint service URL coould not be laded.",
@@ -404,7 +404,7 @@ namespace GreenPrintClient
             if (changeClientID.DialogResult == true)
             {
                 clientID = changeClientID.NewClientID;
-                SettingManager.UpdateClientID(clientID);
+                SettingManager.UpdateUsername(clientID);
                 txtClientID.Text = clientID;
             }
         }
@@ -454,13 +454,24 @@ namespace GreenPrintClient
         private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
         {
             DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
-            req.ClientID = clientID;
-            req.DocumentName = documentName;
-            req.DocumentBytes = null;
-            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
-            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
             req.CarbonCopy_EMailAddressesList = CCList_emails;
             req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
+            req.Comments = string.Empty;
+            req.DeviceSign_LinkedDeviceID = clientID;
+            req.DocumentBytes = null;
+            req.DocumentName = documentName;
+            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
+            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
+            req.SenderName = "NOT SET";
+            req.Username = clientID;
+
+            //req.ClientID = clientID;
+            //req.DocumentName = documentName;
+            //req.DocumentBytes = null;
+            //req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
+            //req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
+            //req.CarbonCopy_EMailAddressesList = CCList_emails;
+            //req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
             return req;
         }
         private string extractEmailCCList()
