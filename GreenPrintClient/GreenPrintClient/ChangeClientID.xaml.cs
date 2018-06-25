@@ -1,8 +1,8 @@
 ﻿using GreenPrintClient.Contracts;
-using GreenPrintClient.Helpers;
 using GreenPrintClient.Helpers.Contracts;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -19,8 +19,6 @@ namespace GreenPrintClient
     /// </summary>
     public partial class ChangeClientID : Window
     {
-        private string greenprintServerURL;
-
         public string NewClientID
         {
             get { return txtNewClientID.Text; }
@@ -39,8 +37,6 @@ namespace GreenPrintClient
             Window mainWindow = curApp.MainWindow;
             this.Left = mainWindow.Left + (mainWindow.Width - this.ActualWidth) / 2;
             this.Top = mainWindow.Top + (mainWindow.Height - this.ActualHeight) / 2;
-
-            greenprintServerURL = SettingManager.LoadSetting(Consts.ConfigurationSetting_GPServerURL);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -68,11 +64,11 @@ namespace GreenPrintClient
             string req = JsonConvert.SerializeObject(userValidationContract);
 
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(greenprintServerURL);
+            client.BaseAddress = new Uri("http://localhost:49639/Account/TestUserCredentials");
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            string path = $"{greenprintServerURL}/Account/TestUserCredentials";
+            string path = $"http://localhost:49639/Account/TestUserCredentials";
             HttpResponseMessage response = await client.PostAsync(path,
                 new StringContent(req, Encoding.UTF8, "application/json"));
 
