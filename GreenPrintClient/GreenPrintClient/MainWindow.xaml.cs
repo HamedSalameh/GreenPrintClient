@@ -197,7 +197,7 @@ namespace GreenPrintClient
         private void validateCriticalSettings()
         {
 
-            settings.TryGetValue("InboxFolder", out inboxFolder);
+            settings.TryGetValue(Consts.ConfigurationSetting_InboxFolder, out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
                 System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
@@ -207,7 +207,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("SubmittedFolder", out submittedFolder);
+            settings.TryGetValue(Consts.ConfigurationSetting_SubmittedFolder, out submittedFolder);
             if (string.IsNullOrEmpty(submittedFolder))
             {
                 System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
@@ -217,7 +217,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("FailedFolder", out failedFolder);
+            settings.TryGetValue(Consts.ConfigurationSetting_FailedFolder, out failedFolder);
             if (string.IsNullOrEmpty(failedFolder))
             {
                 System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
@@ -227,7 +227,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("GPServicesBase", out GPServicesBase);
+            settings.TryGetValue(Consts.ConfigurationSetting_GPServicesBase, out GPServicesBase);
             if (string.IsNullOrEmpty(GPServicesBase))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
@@ -237,7 +237,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("GPServerBase", out GPServerBase);
+            settings.TryGetValue(Consts.ConfigurationSetting_GPServerURL, out GPServerBase);
             if (string.IsNullOrEmpty(GPServerBase))
             {
                 System.Windows.MessageBox.Show($"GreenPrint server URL coould not be laded.",
@@ -247,7 +247,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("USS", out USServiceURL);
+            settings.TryGetValue(Consts.ConfigurationSetting_USS, out USServiceURL);
             if (string.IsNullOrEmpty(USServiceURL))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
@@ -257,7 +257,7 @@ namespace GreenPrintClient
                 System.Windows.Application.Current.Shutdown();
             }
 
-            settings.TryGetValue("PRS", out PRServiceURL);
+            settings.TryGetValue(Consts.ConfigurationSetting_PRS, out PRServiceURL);
             if (string.IsNullOrEmpty(PRServiceURL))
             {
                 System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",

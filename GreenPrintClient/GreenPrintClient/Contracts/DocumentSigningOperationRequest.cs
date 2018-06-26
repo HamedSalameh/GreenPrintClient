@@ -110,7 +110,7 @@ namespace GreenPrintClient.Contracts
             }
             set
             {
-                if (value.Length > Consts.MAX_DOCUMENT_NAME_LENGTH)
+                if (value != null && value.Length > Consts.MAX_DOCUMENT_SIZE_IN_BYTES)
                     throw new ArgumentException("Document size is too big");
 
                 _documentBytes = value;
@@ -251,8 +251,8 @@ namespace GreenPrintClient.Contracts
                 if (value.Length > 4)
                     throw new ArgumentException("Client app OS bits value is too long");
 
-                if (value.Contains("32") == false ||
-                    value.Contains("64") == false ||
+                if (value.Contains("32") == false &&
+                    value.Contains("64") == false &&
                     value.Contains("86") == false)
                     throw new ArgumentException("Client app OS bits contains unsupported values");
 
