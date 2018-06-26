@@ -351,7 +351,7 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
-            if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.DEFAULT_MAX_SUPPORTED_SMS_LENGTH)
+            if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.MAX_SUPPORTED_SMS_LENGTH)
             {
                 MessageBox.Show("Comments length is too long", "Comments", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
@@ -452,7 +452,7 @@ namespace GreenPrintClient
             if (changeClientID.DialogResult == true)
             {
                 clientID = changeClientID.NewClientID;
-                SettingManager.UpdateClientID(clientID);
+                SettingManager.UpdateUsername(clientID);
                 txtClientID.Text = clientID;
             }
         }
@@ -505,18 +505,29 @@ namespace GreenPrintClient
         }
         private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber, string comments)
         {
-            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersionInfo())
-            {
-                ClientID = clientID,
-                DocumentName = documentName,
-                DocumentBytes = null,
-                GuestSign_RecipientEmailAddress = txtEmailAddress.Text,
-                GuestSign_RecipientSMSNumber = recipientSMSNumber,
-                CarbonCopy_EMailAddressesList = CCList_emails,
-                CarbonCopy_SMSPhoneNumbersList = CCList_phones,
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersionInfo());
+            req.CarbonCopy_EMailAddressesList = CCList_emails;
+            req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
+            req.Comments = string.Empty;
+            req.DeviceSign_LinkedDeviceID = clientID;
+            req.DocumentBytes = null;
+            req.DocumentName = documentName;
+            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
+            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
+            req.SenderName = "NOT SET";
+            req.Username = clientID;
+            //{
 
-                Comments = comments
-            };
+            //ClientID = clientID,
+            //DocumentName = documentName,
+            //DocumentBytes = null,
+            //GuestSign_RecipientEmailAddress = txtEmailAddress.Text,
+            //GuestSign_RecipientSMSNumber = recipientSMSNumber,
+            //CarbonCopy_EMailAddressesList = CCList_emails,
+            //CarbonCopy_SMSPhoneNumbersList = CCList_phones,
+
+            //Comments = comments
+            //};
             return req;
         }
         private string extractEmailCCList()

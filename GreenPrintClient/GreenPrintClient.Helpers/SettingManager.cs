@@ -5,17 +5,17 @@ namespace GreenPrintClient.Helpers
 {
     public class SettingManager
     {
-        public static void UpdateClientID(string ClientID)
+        public static void UpdateUsername(string Username)
         {
-            if (string.IsNullOrEmpty(ClientID))
+            if (string.IsNullOrEmpty(Username))
                 return;
 
             var key = Registry.CurrentUser.OpenSubKey("Software\\GreenPrint", true);
             if (key == null)
                 return;
 
-            key.DeleteValue("ClientID");
-            key.SetValue("ClientID", ClientID, RegistryValueKind.String);
+            key.DeleteValue(Consts.ConfigurationSetting_Username);
+            key.SetValue(Consts.ConfigurationSetting_Username, Username, RegistryValueKind.String);
             key.Close();
 
         }
