@@ -196,7 +196,6 @@ namespace GreenPrintClient
 
         private void validateCriticalSettings()
         {
-
             settings.TryGetValue(Consts.ConfigurationSetting_InboxFolder, out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
