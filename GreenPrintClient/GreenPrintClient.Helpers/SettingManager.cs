@@ -38,6 +38,7 @@ namespace GreenPrintClient.Helpers
                 {
                     // assuming no configuration at all exists
                     createRegistryDefaultSettings();
+                    settings = LoadSettings();
                 }
             }
 
