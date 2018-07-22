@@ -5,17 +5,17 @@ namespace GreenPrintClient.Helpers
 {
     public class SettingManager
     {
-        public static void UpdateClientID(string ClientID)
+        public static void UpdateUsername(string Username)
         {
-            if (string.IsNullOrEmpty(ClientID))
+            if (string.IsNullOrEmpty(Username))
                 return;
 
             var key = Registry.CurrentUser.OpenSubKey("Software\\GreenPrint", true);
             if (key == null)
                 return;
 
-            key.DeleteValue("ClientID");
-            key.SetValue("ClientID", ClientID, RegistryValueKind.String);
+            key.DeleteValue(Consts.ConfigurationSetting_Username);
+            key.SetValue(Consts.ConfigurationSetting_Username, Username, RegistryValueKind.String);
             key.Close();
 
         }
@@ -38,6 +38,8 @@ namespace GreenPrintClient.Helpers
                 {
                     // assuming no configuration at all exists
                     createRegistryDefaultSettings();
+                    settings = LoadSettings();
+
                 }
             }
 
@@ -55,8 +57,12 @@ namespace GreenPrintClient.Helpers
                 gpclientBase.SetValue(Consts.ConfigurationSetting_SubmittedFolder, "Submitted");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_FailedFolder, "Failed");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_GPServicesBase, "GPServicesBase");
-                gpclientBase.SetValue(Consts.ConfigurationSetting_UMS, "UMS");
+
+                gpclientBase.SetValue(Consts.ConfigurationSetting_GPServerURL, "GPServerURL");
+                gpclientBase.SetValue(Consts.ConfigurationSetting_USS, "USS");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_PRS, "PRS");
+                gpclientBase.SetValue(Consts.ConfigurationSetting_Username, string.Empty);
+
             }
             catch (System.Exception)
             {
@@ -87,6 +93,25 @@ namespace GreenPrintClient.Helpers
                     index++;
                 }
             }
+        }
+
+        public static string LoadSetting(string Key)
+        {
+            string value = string.Empty;
+            using (RegistryKey root = Registry.CurrentUser.OpenSubKey("Software\\GreenPrint"))
+            {
+                if (root != null && root.ValueCount > 0)
+                {
+                    value = root.GetValue(Key) as string;
+                }
+                else
+                {
+                    // assuming no configuration at all exists
+                    createRegistryDefaultSettings();
+                }
+            }
+
+            return value;
         }
 
         public static List<string> LoadRCCList()

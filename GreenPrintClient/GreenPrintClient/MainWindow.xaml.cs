@@ -1,6 +1,7 @@
-﻿using GreenPrintClient.CustomControls;
+﻿using GreenPrintClient.Contracts;
+using GreenPrintClient.CustomControls;
 using GreenPrintClient.Helpers;
-using GreenPrintClient.Helpers.Contracts;
+
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,7 +26,7 @@ namespace GreenPrintClient
     /// </summary>
     public partial class MainWindow
     {
-        private string GPServicesBase, PRServiceURL, UMServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
+        private string GPServerBase, GPServicesBase, PRServiceURL, USServiceURL, inboxFolder, submittedFolder, failedFolder, clientID;
 
         Dictionary<string, string> settings;
         Dictionary<string, string> countryCodeList;
@@ -41,12 +42,14 @@ namespace GreenPrintClient
 
         private async Task<bool> validateClientIDAsync()
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri(GPServicesBase);
+            HttpClient client = new HttpClient
+            {
+                BaseAddress = new Uri(GPServicesBase)
+            };
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            string path = $"{GPServicesBase}{UMServiceURL}/" + clientID;
+            string path = $"{GPServicesBase}{USServiceURL}/" + clientID;
             HttpResponseMessage response = await client.GetAsync(path);
 
             if (!response.IsSuccessStatusCode)
@@ -78,8 +81,10 @@ namespace GreenPrintClient
                 }
                 catch
                 {
-                    clientValidationResponse = new ClientValidationResponse();
-                    clientValidationResponse.Message = res.Replace("\"", "").Replace("\\", "");
+                    clientValidationResponse = new ClientValidationResponse
+                    {
+                        Message = res.Replace("\"", "").Replace("\\", "")
+                    };
 
                     txtMessages.Inlines.Add(clientValidationResponse.Message);
                 }
@@ -94,7 +99,7 @@ namespace GreenPrintClient
             InitializeComponent();
 
             LocalStorage = new LocalStorage();
-            
+
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -145,7 +150,7 @@ namespace GreenPrintClient
 
             rbDeviceSign.IsChecked = true;
 
-            settings.TryGetValue("ClientID", out clientID);
+            settings.TryGetValue(Consts.ConfigurationSetting_Username, out clientID);
             if (clientID != string.Empty)
             {
                 txtClientID.Text = clientID;
@@ -250,8 +255,21 @@ namespace GreenPrintClient
                 Environment.Exit(1);
             }
 
-            settings.TryGetValue(Consts.ConfigurationSetting_UMS, out UMServiceURL);
-            if (string.IsNullOrEmpty(UMServiceURL))
+
+            settings.TryGetValue(Consts.ConfigurationSetting_GPServerURL, out GPServerBase);
+            if (string.IsNullOrEmpty(GPServerBase))
+            {
+                System.Windows.MessageBox.Show($"GreenPrint server URL coould not be laded.",
+                    "GreenPrint Client Initialization",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                System.Windows.Application.Current.Shutdown();
+            }
+
+            settings.TryGetValue(Consts.ConfigurationSetting_USS, out USServiceURL);
+            if (string.IsNullOrEmpty(USServiceURL))
+
+
             {
                 MessageBox.Show($"GreenPrint service URL coould not be laded.",
                     "GreenPrint Client Initialization",
@@ -315,6 +333,8 @@ namespace GreenPrintClient
             }
             catch (Exception Ex)
             {
+                Logger.LogError($"GreenPrint client was not able to navigate to {e?.Uri?.ToString()} due to internal error.\r\n{Ex.Message}");
+
                 System.Windows.MessageBox.Show($"GreenPrint client was not able to navigate to {e?.Uri?.ToString()} due to internal error.\r\n{Ex.Message}",
                     "Navigate",
                     MessageBoxButton.OK,
@@ -324,7 +344,18 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
-            
+            if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.MAX_SUPPORTED_SMS_LENGTH)
+            {
+                MessageBox.Show("Comments length is too long", "Comments", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
+            }
+
+            ClientAppVersionInfo clientAppVersion = new ClientAppVersionInfo();
+            string recipientSMSNumber = string.Empty;
+            string documentName = string.Empty;
+            string CCList_emails = extractEmailCCList();
+            string CCList_phones = extractPhoneNumbersCCList();
+
             // Reset the messages windows
             txtMessages.Text = "";
             // Show the loading spinnger
@@ -337,10 +368,6 @@ namespace GreenPrintClient
                 return;
             }
 
-            string documentName = string.Empty;
-            string CCList_emails = extractEmailCCList();
-            string CCList_phones = extractPhoneNumbersCCList();
-
             if (chkSendCopyToMe.IsChecked.Value == true)
             {
                 CCList_emails += "," + clientID;
@@ -350,8 +377,18 @@ namespace GreenPrintClient
             {
                 cmbCountryPhonePrefix.SelectedItem = cmbCountryPhonePrefix.Items[111]; // default to israel
             }
-            string recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
 
+            if (rbRemoteSign.IsChecked.Value == true && txtSMSNumber.Text.Length > 0)
+            {
+                recipientSMSNumber = "+" + cmbCountryPhonePrefix.SelectedValue.ToString() + "-" + txtSMSNumber.Text;
+            }
+
+            if (rbRemoteSign.IsChecked.Value == true && txtEmailAddress.Text.Length > 0)
+            {
+
+            }
+
+            string requestComments = txtComments.Text;
             // Clear any message in messages text box
             txtMessages.Text = "";
 
@@ -364,26 +401,24 @@ namespace GreenPrintClient
             documentName = buildDocumentName();
 
             // Build DSO request
-            DocumentSigningOperationRequest req = buildDSORequest(documentName, CCList_emails, CCList_phones, recipientSMSNumber);
-            // Get the printed document as byte array
-            byte[] data = null;
-            data = GetLatestPrint();
-            if (req == null)
-                return;
-            // Add the printed document bytes to the request object
-            req.DocumentBytes = data;
-
-            // Serialize the request object
-            MemoryStream memStream = new MemoryStream();
-
-            BinaryFormatter bf = new BinaryFormatter();
-            using (MemoryStream ms = new MemoryStream())
+            DocumentSigningOperationRequest dsoRequest = buildDSORequest(documentName, CCList_emails, CCList_phones, recipientSMSNumber, requestComments);
+            if (dsoRequest == null)
             {
-                bf.Serialize(ms, req);
-                data = ms.ToArray();
+                // todo: add message
+                return;
+            }
+            // Get the printed document as byte array
+            byte[] data = GetLatestPrint();
+            if (data == null || data.Length == 0)
+            {
+                // todo: add message
+                return;
             }
 
-            var serializedRequest = JsonConvert.SerializeObject(req);
+            // Add the printed document bytes to the request object
+            dsoRequest.DocumentBytes = data;
+
+            var serializedRequest = JsonConvert.SerializeObject(dsoRequest);
 
             var resultStatus = submitViaWebRequest(request, serializedRequest);
             txtMessages.Text = resultStatus;
@@ -393,7 +428,7 @@ namespace GreenPrintClient
 
         private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
         {
-            changeClientID = new ChangeClientID(clientID);
+            changeClientID = new ChangeClientID(GPServerBase, clientID);
             changeClientID.Closed += ChangeClientID_Closed;
 
             changeClientID.ShowDialog();
@@ -404,7 +439,7 @@ namespace GreenPrintClient
             if (changeClientID.DialogResult == true)
             {
                 clientID = changeClientID.NewClientID;
-                SettingManager.UpdateClientID(clientID);
+                SettingManager.UpdateUsername(clientID);
                 txtClientID.Text = clientID;
             }
         }
@@ -431,6 +466,10 @@ namespace GreenPrintClient
             controlAddEmailAddress.HideAutoComplete();
         }
 
+        private void txtComments_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+        }
+
         private void lstCCList_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
         {
         }
@@ -451,16 +490,31 @@ namespace GreenPrintClient
 
             return documentName;
         }
-        private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber)
+        private DocumentSigningOperationRequest buildDSORequest(string documentName, string CCList_emails, string CCList_phones, string recipientSMSNumber, string comments)
         {
-            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest();
-            req.ClientID = clientID;
-            req.DocumentName = documentName;
-            req.DocumentBytes = null;
-            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
-            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
+            DocumentSigningOperationRequest req = new DocumentSigningOperationRequest(new ClientAppVersionInfo());
             req.CarbonCopy_EMailAddressesList = CCList_emails;
             req.CarbonCopy_SMSPhoneNumbersList = CCList_phones;
+            req.Comments = string.Empty;
+            req.DeviceSign_LinkedDeviceID = clientID;
+            req.DocumentBytes = null;
+            req.DocumentName = documentName;
+            req.GuestSign_RecipientEmailAddress = txtEmailAddress.Text;
+            req.GuestSign_RecipientSMSNumber = recipientSMSNumber;
+            req.SenderName = "NOT SET";
+            req.Username = clientID;
+            //{
+
+            //ClientID = clientID,
+            //DocumentName = documentName,
+            //DocumentBytes = null,
+            //GuestSign_RecipientEmailAddress = txtEmailAddress.Text,
+            //GuestSign_RecipientSMSNumber = recipientSMSNumber,
+            //CarbonCopy_EMailAddressesList = CCList_emails,
+            //CarbonCopy_SMSPhoneNumbersList = CCList_phones,
+
+            //Comments = comments
+            //};
             return req;
         }
         private string extractEmailCCList()
@@ -488,7 +542,7 @@ namespace GreenPrintClient
             }
 
             return list;
-        }   
+        }
         private string extractPhoneNumbersCCList()
         {
             List<string> phoneNumbers = new List<string>();
@@ -504,8 +558,7 @@ namespace GreenPrintClient
                         // Not an email
                         var newitem = item.ToString().Replace('-', ' ').Replace('.', ' ').Replace(" ", "");    // removing dashes
                         // removing dots
-                        long newnumber;
-                        long.TryParse(newitem, out newnumber);
+                        long.TryParse(newitem, out long newnumber);
 
                         if (newnumber != 0)
                         {
@@ -532,9 +585,16 @@ namespace GreenPrintClient
         {
             byte[] latestPrintedDocument = null;
             var directory = new DirectoryInfo(inboxFolder);
-            var recentPrintJob = directory.GetFiles()
-                                                     .OrderByDescending(f => f.LastWriteTime)
-                                                     .First();
+            FileInfo recentPrintJob = null;
+
+            try
+            {
+                recentPrintJob = directory?.GetFiles()?.OrderByDescending(f => f.LastWriteTime)?.First();
+            }
+            catch (Exception Ex)
+            {
+                Logger.LogError($"Unable to get latest printed document: {Ex.Message}");
+            }
 
             if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
             {
@@ -553,8 +613,9 @@ namespace GreenPrintClient
                     latestPrintedDocument = File.ReadAllBytes(recentPrintJob.FullName);
                 }
             }
-            catch
+            catch(Exception ex)
             {
+                Logger.LogError($"GreenPrint client software was not able to retreive the latest print job: {ex.Message}");
                 // log
                 System.Windows.MessageBox.Show($"GreenPrint client software was not able to retreive the latest print job, please try again",
                     "Retrieve Printed Document",
@@ -611,6 +672,8 @@ namespace GreenPrintClient
             }
             catch (Exception Ex)
             {
+                Logger.LogError($"An error happened while trying to send the request: {Ex.Message}");
+
                 status = "An error happened while trying to send the request.\r\n" + Ex.Message;
             }
             finally

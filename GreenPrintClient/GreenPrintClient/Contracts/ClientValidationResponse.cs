@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GreenPrintClient.Helpers.Contracts
+namespace GreenPrintClient.Contracts
 {
     public class ClientValidationResponse
     {
