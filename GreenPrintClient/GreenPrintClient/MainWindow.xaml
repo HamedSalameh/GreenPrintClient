@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:GreenPrintClient.CustomControls"
-        Title="GreenPrint" Height="690" Width="500" Loaded="MetroWindow_Loaded"
+        Title="Greenprint.co | Print" Height="690" Width="500" Loaded="MetroWindow_Loaded"
         
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
          TextElement.Foreground="{DynamicResource MaterialDesignBody}"
@@ -13,18 +13,12 @@
          FontFamily="{DynamicResource MaterialDesignFont}"
 
         BorderThickness="0" 
-        ResizeMode="NoResize"
+        ResizeMode="NoResize" Background="White" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow"
         >
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
-    <Window.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFEAEAEA" Offset="1"/>
-            <GradientStop Color="White"/>
-        </LinearGradientBrush>
-    </Window.Background>
     <Grid HorizontalAlignment="Left" Margin="5" Name="MasterGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="210" />
@@ -48,7 +42,10 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-
+        <Image Grid.Column="0" Grid.ColumnSpan="3"
+               Grid.Row="0" Grid.RowSpan="15" Source="Resources/grass.jpg" Stretch="UniformToFill"
+               Margin="-10px" Opacity="0.25"
+               />
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
         <materialDesign:Card
@@ -66,9 +63,12 @@
                             IsIndeterminate="True" />
         </materialDesign:Card>
 
+        
+
         <Label          Margin="5" Name="lblClientID"  FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Username</Label>
         <WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0">
-            <TextBox IsEnabled="False" HorizontalAlignment="Right" Margin="5" Name="txtClientID"  Width="170"></TextBox>
+            <TextBox IsEnabled="False" HorizontalAlignment="Right" Margin="5" Name="txtClientID"  Width="170"
+                     />
             <Button 
                     Name="btnChangeClientID"
                     Padding="0"

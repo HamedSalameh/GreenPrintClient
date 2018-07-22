@@ -99,6 +99,7 @@
     <Compile Include="CustomConverters\BooleanToVisibilityConverter.cs" />
     <Compile Include="CustomConverters\InverseBooleanConverter.cs" />
     <Compile Include="Contracts\DocumentSigningOperationRequest.cs" />
+    <Compile Include="dsoDataContext.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
