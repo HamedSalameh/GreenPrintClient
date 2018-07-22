@@ -44,6 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Consts.cs" />
+
+    <Compile Include="Contracts\ClientValidationResponse.cs" />
+
     <Compile Include="Countries.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Extentions.cs" />

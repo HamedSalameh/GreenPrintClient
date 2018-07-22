@@ -53,11 +53,13 @@ namespace GreenPrintClient
         private async void Save_ClickAsync(object sender, RoutedEventArgs e)
         {
             // Validate credentials with server
+
             UserValidation userValidationContract = new UserValidation
             {
                 UserName = txtNewClientID.Text,
                 password = txtNewClientPassword.Password
             };
+
 
             await valideUserCredentialsWithServer(userValidationContract);
             wChangeClient.Focus();

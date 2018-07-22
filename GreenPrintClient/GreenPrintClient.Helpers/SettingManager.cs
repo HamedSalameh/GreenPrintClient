@@ -39,6 +39,7 @@ namespace GreenPrintClient.Helpers
                     // assuming no configuration at all exists
                     createRegistryDefaultSettings();
                     settings = LoadSettings();
+
                 }
             }
 
@@ -56,10 +57,12 @@ namespace GreenPrintClient.Helpers
                 gpclientBase.SetValue(Consts.ConfigurationSetting_SubmittedFolder, "Submitted");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_FailedFolder, "Failed");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_GPServicesBase, "GPServicesBase");
+
                 gpclientBase.SetValue(Consts.ConfigurationSetting_GPServerURL, "GPServerURL");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_USS, "USS");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_PRS, "PRS");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_Username, string.Empty);
+
             }
             catch (System.Exception)
             {

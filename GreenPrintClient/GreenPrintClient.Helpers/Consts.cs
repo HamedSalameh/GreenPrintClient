@@ -13,6 +13,7 @@
         public const int DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC = 10;
 
         public const string ConfigurationSetting_InboxFolder = "InboxFolder";
+
         public const string ConfigurationSetting_SubmittedFolder = "SubmittedFolder";
         public const string ConfigurationSetting_FailedFolder = "FailedFolder";
         public const string ConfigurationSetting_GPServicesBase = "GPServicesBase";
@@ -62,5 +63,6 @@
         public const int MAX_CLIENT_APP_DESCRIPTION_LENGTH = 100;
         public const int MAX_CLIENT_APP_VERSION_LENGTH = 10;
         public const int MAX_CLIENT_APP_OS_LENGTH = 64;
+
     }
 }

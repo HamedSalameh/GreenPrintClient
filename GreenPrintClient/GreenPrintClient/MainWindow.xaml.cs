@@ -1,6 +1,7 @@
 ﻿using GreenPrintClient.Contracts;
 using GreenPrintClient.CustomControls;
 using GreenPrintClient.Helpers;
+
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -108,7 +109,20 @@ namespace GreenPrintClient
 
         private void Init()
         {
-            settings = SettingManager.LoadSettings();
+            try
+            {
+                settings = SettingManager.LoadSettings();
+            }
+            catch (Exception Ex)
+            {
+                // future - logging
+                using(EventLog eventLog = new EventLog("Application"))
+                {
+                    eventLog.Source = "Application";
+                    eventLog.WriteEntry("Fatal error whilte trying to initialize GreenPrint Client configration: " + Ex.Message, EventLogEntryType.Error);
+                }
+                Environment.Exit(1);
+            }
             rcc = SettingManager.LoadRCCList();
             cachedPhoneNumbers = LocalStorage.LoadPhoneNumbers();
 
@@ -140,7 +154,6 @@ namespace GreenPrintClient
             if (clientID != string.Empty)
             {
                 txtClientID.Text = clientID;
-                //appbar_ClientID.Text = clientID;
             }
 
         }
@@ -197,45 +210,51 @@ namespace GreenPrintClient
 
         private void validateCriticalSettings()
         {
+
             settings.TryGetValue(Consts.ConfigurationSetting_InboxFolder, out inboxFolder);
             if (string.IsNullOrEmpty(inboxFolder))
             {
-                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                System.Windows.Application.Current.Shutdown();
+                Application.Current?.Shutdown();
+                Environment.Exit(1);
             }
 
             settings.TryGetValue(Consts.ConfigurationSetting_SubmittedFolder, out submittedFolder);
             if (string.IsNullOrEmpty(submittedFolder))
             {
-                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                System.Windows.Application.Current.Shutdown();
+                Application.Current?.Shutdown();
+                Environment.Exit(1);
             }
 
             settings.TryGetValue(Consts.ConfigurationSetting_FailedFolder, out failedFolder);
             if (string.IsNullOrEmpty(failedFolder))
             {
-                System.Windows.MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
+                MessageBox.Show($"Unable to process printing job, could not get inbox folder name.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                System.Windows.Application.Current.Shutdown();
+                Application.Current?.Shutdown();
+                Environment.Exit(1);
             }
 
             settings.TryGetValue(Consts.ConfigurationSetting_GPServicesBase, out GPServicesBase);
             if (string.IsNullOrEmpty(GPServicesBase))
             {
-                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                MessageBox.Show($"GreenPrint service URL coould not be laded.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                System.Windows.Application.Current.Shutdown();
+                Application.Current?.Shutdown();
+                Environment.Exit(1);
             }
+
 
             settings.TryGetValue(Consts.ConfigurationSetting_GPServerURL, out GPServerBase);
             if (string.IsNullOrEmpty(GPServerBase))
@@ -249,22 +268,26 @@ namespace GreenPrintClient
 
             settings.TryGetValue(Consts.ConfigurationSetting_USS, out USServiceURL);
             if (string.IsNullOrEmpty(USServiceURL))
+
+
             {
-                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                MessageBox.Show($"GreenPrint service URL coould not be laded.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                System.Windows.Application.Current.Shutdown();
+                Application.Current?.Shutdown();
+                Environment.Exit(1);
             }
 
             settings.TryGetValue(Consts.ConfigurationSetting_PRS, out PRServiceURL);
             if (string.IsNullOrEmpty(PRServiceURL))
             {
-                System.Windows.MessageBox.Show($"GreenPrint service URL coould not be laded.",
+                MessageBox.Show($"GreenPrint service URL coould not be laded.",
                     "GreenPrint Client Initialization",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                System.Windows.Application.Current.Shutdown();
+                Application.Current?.Shutdown();
+                Environment.Exit(1);
             }
         }
 
@@ -278,38 +301,6 @@ namespace GreenPrintClient
         {
 
         }
-
-        //private void btnAddCCAddress_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (txtAddCC.Text.Length < 5)
-        //        return;
-
-        //    if (lstCCList.Items.Count > Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC)
-        //    {
-        //        System.Windows.MessageBox.Show($"You have reached the maximum supported number of recipients ({ Consts.DEFAULT_MAX_SUPPORTED_ITEMS_IN_CC})",
-        //            "Add CC Address",
-        //            MessageBoxButton.OK,
-        //            MessageBoxImage.Warning);
-        //        return;
-        //    }
-
-        //    var newItem = txtAddCC.Text;
-        //    lstCCList.Items.Add(txtAddCC.Text);
-        //    txtAddCC.Text = "";
-
-        //    // Update registry
-        //    var _rcc = SettingManager.LoadRCCList();
-        //    if (_rcc == null)
-        //        _rcc = new List<string>();
-
-        //    // if the item is not in the list, then add it
-        //    if (_rcc.IndexOf(newItem) == -1 || _rcc.Contains(newItem) == false)
-        //    {
-        //        _rcc.Add(newItem);
-        //    }
-
-        //    SettingManager.updateRCCList(_rcc);
-        //}
 
         private void cmbCountryPhonePrefix_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
