@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GreenPrintClient.Helpers
 {
@@ -37,7 +39,8 @@ namespace GreenPrintClient.Helpers
                 else
                 {
                     // assuming no configuration at all exists
-                    createRegistryDefaultSettings();
+                    string gprootfolder = createDefaultFolders();
+                    createRegistryDefaultSettings(gprootfolder);
                     settings = LoadSettings();
 
                 }
@@ -46,16 +49,54 @@ namespace GreenPrintClient.Helpers
             return settings;
         }
 
-        private static void createRegistryDefaultSettings()
+        private static string createDefaultFolders()
+        {
+            
+            string rootPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            DirectoryInfo greenprintRoot;
+
+            try
+            {
+                greenprintRoot = Directory.CreateDirectory(rootPath + @"\Greenprint");
+            }
+            catch (Exception Ex)
+            {
+                Logger.LogError($"Could not create root folder for greenprint client : {Ex.Message}");
+                throw;
+            }
+
+            if (greenprintRoot != null && greenprintRoot.Exists)
+            {
+                try
+                {
+                    var _inbox = Directory.CreateDirectory(greenprintRoot.FullName + @"\" + Consts._inboxfolder);
+                    var _failed = Directory.CreateDirectory(greenprintRoot.FullName + @"\" + Consts._failedfolder);
+                    var _submitted = Directory.CreateDirectory(greenprintRoot.FullName + @"\" + Consts._submittedfolder);
+                }
+                catch (Exception Ex)
+                {
+                    Logger.LogError($"Could not create one or more of the required subfolders : {Ex.Message}");
+                    throw;
+                }
+            }
+            else
+            {
+                throw new Exception("Could not create root folder to GreenPrint client");
+            }
+
+            return greenprintRoot.FullName;
+        }
+
+        private static void createRegistryDefaultSettings(string GreenPrintRootFolder)
         {
             try
             {
                 var gpclientBase = Registry.CurrentUser.CreateSubKey("Software\\GreenPrint");
                 Registry.CurrentUser.CreateSubKey("Software\\GreenPrint\\RCC");
 
-                gpclientBase.SetValue(Consts.ConfigurationSetting_InboxFolder, "Inbox");
-                gpclientBase.SetValue(Consts.ConfigurationSetting_SubmittedFolder, "Submitted");
-                gpclientBase.SetValue(Consts.ConfigurationSetting_FailedFolder, "Failed");
+                gpclientBase.SetValue(Consts.ConfigurationSetting_InboxFolder, $"{GreenPrintRootFolder}\\{Consts._inboxfolder}");
+                gpclientBase.SetValue(Consts.ConfigurationSetting_SubmittedFolder, $"{GreenPrintRootFolder}\\{Consts._submittedfolder}");
+                gpclientBase.SetValue(Consts.ConfigurationSetting_FailedFolder, $"{GreenPrintRootFolder}\\{Consts._failedfolder}");
                 gpclientBase.SetValue(Consts.ConfigurationSetting_GPServicesBase, "GPServicesBase");
 
                 gpclientBase.SetValue(Consts.ConfigurationSetting_GPServerURL, "GPServerURL");
@@ -107,7 +148,7 @@ namespace GreenPrintClient.Helpers
                 else
                 {
                     // assuming no configuration at all exists
-                    createRegistryDefaultSettings();
+                    value = "";
                 }
             }
 

@@ -2,6 +2,9 @@
 {
     public static class Consts
     {
+        public const string _inboxfolder = "_inbox";
+        public const string _failedfolder = "_failed";
+        public const string _submittedfolder = "_submitted";
         // Max supported phone number length, while taking into consideration international and local prefixes.
         public const int DEFAULT_MAX_PHONE_NUMBER_LENGTH = 20;
 

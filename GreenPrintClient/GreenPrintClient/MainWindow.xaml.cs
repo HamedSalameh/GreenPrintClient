@@ -19,6 +19,10 @@ using System.Windows.Navigation;
 
 namespace GreenPrintClient
 {
+    public class DataContext
+    {
+        public string Username { get; set; }
+    }
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
