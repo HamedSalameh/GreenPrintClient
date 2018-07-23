@@ -1,4 +1,5 @@
 ﻿using GreenPrintClient.Contracts;
+using GreenPrintClient.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Net;
@@ -29,6 +30,10 @@ namespace GreenPrintClient
             if(string.IsNullOrEmpty(GreenPrintServerBaseAddress))
             {
                 throw new ArgumentException("Base server address must not be empty or null", nameof(GreenPrintServerBaseAddress));
+            }
+            if (Validators.IsValidURI(GreenPrintServerBaseAddress) == false)
+            {
+                throw new ArgumentException("Base server address is not valid");
             }
 
             InitializeComponent();

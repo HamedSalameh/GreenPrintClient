@@ -44,6 +44,15 @@ namespace GreenPrintClient
 
         private async Task<bool> validateClientIDAsync()
         {
+            if (string.IsNullOrEmpty(clientID))
+            {
+                System.Windows.MessageBox.Show($"Please make sure you set your username.",
+                        "Validation",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Stop);
+                return false;
+            }
+
             HttpClient client = new HttpClient
             {
                 BaseAddress = new Uri(GPServicesBase)
@@ -58,39 +67,49 @@ namespace GreenPrintClient
             {
                 // Pre conditions met
                 var res = response.Content?.ReadAsStringAsync()?.Result;
-                ClientValidationResponse clientValidationResponse = null;
-
-                if (string.IsNullOrEmpty(res))
+                if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    txtMessages.Inlines.Add("Could not parse server response, please try again");
+                    txtMessages.Inlines.Add("Failed to submit printed document." + Environment.NewLine);
+                    txtMessages.Inlines.Add("Error response from GreenPrint.co : " + response.StatusCode);
+                    Logger.LogWarning($"Could not submit print job to greenprint.co.\r\n\r\nRequest: {response.RequestMessage.RequestUri.ToString()} Response: {response.StatusCode}");
                     return false;
                 }
-
-                try
+                else
                 {
-                    clientValidationResponse = JsonConvert.DeserializeObject<ClientValidationResponse>(res.Remove(0, 1).Replace("\\", "").Remove(res.Remove(0, 1).Replace("\\", "").Length - 1));
+                    ClientValidationResponse clientValidationResponse = null;
 
-                    txtMessages.Inlines.Add(clientValidationResponse.Message);
-                    txtMessages.Inlines.Add(": ");
-                    Hyperlink hyperLink = new Hyperlink()
+                    if (string.IsNullOrEmpty(res))
                     {
-                        NavigateUri = new Uri(clientValidationResponse.HyperLink)
-                    };
-                    hyperLink.Inlines.Add(clientValidationResponse.HyperLinkName);
-                    hyperLink.RequestNavigate += HyperLink_RequestNavigate;
+                        txtMessages.Inlines.Add("Could not parse server response, please try again");
+                        return false;
+                    }
 
-                    txtMessages.Inlines.Add(hyperLink);
-                }
-                catch
-                {
-                    clientValidationResponse = new ClientValidationResponse
+                    try
                     {
-                        Message = res.Replace("\"", "").Replace("\\", "")
-                    };
+                        clientValidationResponse = JsonConvert.DeserializeObject<ClientValidationResponse>(res.Remove(0, 1).Replace("\\", "").Remove(res.Remove(0, 1).Replace("\\", "").Length - 1));
 
-                    txtMessages.Inlines.Add(clientValidationResponse.Message);
+                        txtMessages.Inlines.Add(clientValidationResponse.Message);
+                        txtMessages.Inlines.Add(": ");
+                        Hyperlink hyperLink = new Hyperlink()
+                        {
+                            NavigateUri = new Uri(clientValidationResponse.HyperLink)
+                        };
+                        hyperLink.Inlines.Add(clientValidationResponse.HyperLinkName);
+                        hyperLink.RequestNavigate += HyperLink_RequestNavigate;
+
+                        txtMessages.Inlines.Add(hyperLink);
+                    }
+                    catch
+                    {
+                        clientValidationResponse = new ClientValidationResponse
+                        {
+                            Message = res.Replace("\"", "").Replace("\\", "")
+                        };
+
+                        txtMessages.Inlines.Add(clientValidationResponse.Message);
+                    }
+                    return false;
                 }
-                return false;
             }
 
             return true;
@@ -99,9 +118,7 @@ namespace GreenPrintClient
         public MainWindow()
         {
             InitializeComponent();
-
             LocalStorage = new LocalStorage();
-
         }
 
         private void MetroWindow_Loaded(object sender, RoutedEventArgs e)
@@ -118,7 +135,7 @@ namespace GreenPrintClient
             catch (Exception Ex)
             {
                 // future - logging
-                using(EventLog eventLog = new EventLog("Application"))
+                using (EventLog eventLog = new EventLog("Application"))
                 {
                     eventLog.Source = "Application";
                     eventLog.WriteEntry("Fatal error whilte trying to initialize GreenPrint Client configration: " + Ex.Message, EventLogEntryType.Error);
@@ -346,6 +363,16 @@ namespace GreenPrintClient
 
         private async void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            if (Validators.IsValidURI(GPServerBase) == false)
+            {
+                // log
+                System.Windows.MessageBox.Show($"GreenPrint.co server address is not valid.",
+                    "Submit Print",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
             if (rbRemoteSign.IsChecked.Value == true && cbSignViaSMS.IsChecked.Value == true && txtComments.Text.Length > Consts.MAX_SUPPORTED_SMS_LENGTH)
             {
                 MessageBox.Show("Comments length is too long", "Comments", MessageBoxButton.OK, MessageBoxImage.Stop);
@@ -430,10 +457,23 @@ namespace GreenPrintClient
 
         private void btnChangeClientID_Click(object sender, RoutedEventArgs e)
         {
-            changeClientID = new ChangeClientID(GPServerBase, clientID);
-            changeClientID.Closed += ChangeClientID_Closed;
+            try
+            {
+                changeClientID = new ChangeClientID(GPServerBase, clientID);
+                changeClientID.Closed += ChangeClientID_Closed;
 
-            changeClientID.ShowDialog();
+                changeClientID.ShowDialog();
+            }
+            catch (Exception Ex)
+            {
+                Logger.LogError($"Could not show change username dialog due to the following error: {Ex.Message}");
+                // log
+                System.Windows.MessageBox.Show($"Could not show change username dialog due to the following error: {Ex.Message}",
+                    "Change Username",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+
+            }
         }
 
         private void ChangeClientID_Closed(object sender, EventArgs e)
@@ -615,7 +655,7 @@ namespace GreenPrintClient
                     latestPrintedDocument = File.ReadAllBytes(recentPrintJob.FullName);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Logger.LogError($"GreenPrint client software was not able to retreive the latest print job: {ex.Message}");
                 // log
