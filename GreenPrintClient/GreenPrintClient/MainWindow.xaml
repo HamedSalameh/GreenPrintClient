@@ -13,7 +13,7 @@
          FontFamily="{DynamicResource MaterialDesignFont}"
 
         BorderThickness="0" 
-        ResizeMode="NoResize" Background="White" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow"
+        ResizeMode="NoResize" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" Background="White"
         >
 
     <Window.Resources>
@@ -43,8 +43,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Image Grid.Column="0" Grid.ColumnSpan="3"
-               Grid.Row="0" Grid.RowSpan="15" Source="Resources/grass.jpg" Stretch="UniformToFill"
-               Margin="-10px" Opacity="0.25"
+               Grid.Row="0" Grid.RowSpan="15" Source="Resources/themebg.jpg"
+               Margin="-10px" Opacity="0.25" Stretch="UniformToFill"
                />
         <Grid  Margin="10,10,10,10" VerticalAlignment="Top" />
 
@@ -63,7 +63,7 @@
                             IsIndeterminate="True" />
         </materialDesign:Card>
 
-        
+
 
         <Label          Margin="5" Name="lblClientID"  FontSize="14" FontFamily="Segoe UI, Lucida Sans Unicode, Verdana">Username</Label>
         <WrapPanel Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="0">
