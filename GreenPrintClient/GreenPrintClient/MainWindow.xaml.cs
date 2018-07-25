@@ -631,7 +631,7 @@ namespace GreenPrintClient
 
             try
             {
-                recentPrintJob = directory?.GetFiles()?.OrderByDescending(f => f.LastWriteTime)?.First();
+                recentPrintJob = directory?.GetFiles("*.PDF")?.OrderByDescending(f => f.LastWriteTime)?.First();
             }
             catch (Exception Ex)
             {
@@ -640,7 +640,7 @@ namespace GreenPrintClient
 
             if (recentPrintJob == null || recentPrintJob.FullName.Length < 1)
             {
-                System.Windows.MessageBox.Show($"GreenPrint client software was not able to retreive the latest print job, please try again",
+                MessageBox.Show($"GreenPrint client software was not able to retreive the latest print job, please try again",
                     "Retrieve Printed Document",
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
